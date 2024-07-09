@@ -1,5 +1,6 @@
 [package]
 name = "dealers-choice"
+authors = ["U-Zyn Chua <chua@uzyn.com>"]
 version = "0.1.0"
 edition = "2021"
 
