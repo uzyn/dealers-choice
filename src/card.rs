@@ -1,3 +1,4 @@
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Suit {
     Club,
     Diamond,
@@ -17,7 +18,14 @@ impl std::fmt::Display for Suit {
     }
 }
 
-#[derive(Debug)]
+impl Suit {
+    pub fn iter() -> &'static [Suit] {
+        static SUITS: [Suit; 4] = [Suit::Club, Suit::Diamond, Suit::Heart, Suit::Spade];
+        &SUITS
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Rank {
     Ace,
     Deuce,
@@ -54,6 +62,28 @@ impl std::fmt::Display for Rank {
     }
 }
 
+impl Rank {
+    pub fn iter() -> &'static [Rank] {
+        static RANKS: [Rank; 13] = [
+            Rank::Ace,
+            Rank::Deuce,
+            Rank::Trey,
+            Rank::Four,
+            Rank::Five,
+            Rank::Six,
+            Rank::Seven,
+            Rank::Eight,
+            Rank::Nine,
+            Rank::Ten,
+            Rank::Jack,
+            Rank::Queen,
+            Rank::King,
+        ];
+        &RANKS
+    }
+}
+
+#[derive(Debug)]
 pub struct Card {
     suit: Suit,
     rank: Rank,
@@ -75,9 +105,37 @@ mod tests {
 
     #[test]
     fn display_card_in_string_format() {
-        assert_eq!(Card {suit: Suit::Club, rank: Rank::Ace }.to_string(), "Ac");
-        assert_eq!(Card {suit: Suit::Heart, rank: Rank::Ten }.to_string(), "Th");
-        assert_eq!(Card {suit: Suit::Spade, rank: Rank::Queen }.to_string(), "Qs");
-        assert_eq!(Card {suit: Suit::Diamond, rank: Rank::Trey }.to_string(), "3d");
+        assert_eq!(
+            Card {
+                suit: Suit::Club,
+                rank: Rank::Ace
+            }
+            .to_string(),
+            "Ac"
+        );
+        assert_eq!(
+            Card {
+                suit: Suit::Heart,
+                rank: Rank::Ten
+            }
+            .to_string(),
+            "Th"
+        );
+        assert_eq!(
+            Card {
+                suit: Suit::Spade,
+                rank: Rank::Queen
+            }
+            .to_string(),
+            "Qs"
+        );
+        assert_eq!(
+            Card {
+                suit: Suit::Diamond,
+                rank: Rank::Trey
+            }
+            .to_string(),
+            "3d"
+        );
     }
 }
