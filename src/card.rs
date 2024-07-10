@@ -93,9 +93,11 @@ impl Card {
     pub fn new(suit: Suit, rank: Rank) -> Card {
         Card { suit, rank }
     }
+}
 
-    pub fn to_string(&self) -> String {
-        format!("{}{}", self.rank, self.suit)
+impl std::fmt::Display for Card {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}{}", self.rank, self.suit)
     }
 }
 
