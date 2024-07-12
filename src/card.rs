@@ -101,6 +101,35 @@ impl std::fmt::Display for Card {
     }
 }
 
+impl From<String> for Card {
+    fn from(s: String) -> Card {
+        let suit = match s.chars().last().unwrap() {
+            'c' => Suit::Club,
+            'd' => Suit::Diamond,
+            'h' => Suit::Heart,
+            's' => Suit::Spade,
+            _ => panic!("Invalid suit"),
+        };
+        let rank = match s.chars().nth(0).unwrap() {
+            '2' => Rank::Deuce,
+            '3' => Rank::Trey,
+            '4' => Rank::Four,
+            '5' => Rank::Five,
+            '6' => Rank::Six,
+            '7' => Rank::Seven,
+            '8' => Rank::Eight,
+            '9' => Rank::Nine,
+            'T' => Rank::Ten,
+            'J' => Rank::Jack,
+            'Q' => Rank::Queen,
+            'K' => Rank::King,
+            'A' => Rank::Ace,
+            _ => panic!("Invalid rank"),
+        };
+        Card { suit, rank }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -139,5 +168,36 @@ mod tests {
             .to_string(),
             "3d"
         );
+    }
+
+    #[test]
+    fn card_from_string() {
+        assert_eq!(
+            Card::from("Ac".to_string()),
+            Card {
+                suit: Suit::Club,
+                rank: Rank::Ace
+            }
+        );
+        assert_eq!(
+            Card::from("Th".to_string()),
+            Card {
+                suit: Suit::Heart,
+                rank: Rank::Ten
+            }
+        );
+        assert_eq!(
+            Card::from("Qs".to_string()),
+            Card {
+                suit: Suit::Spade,
+                rank: Rank::Queen
+            }
+        );
+
+        let card = Card {
+            suit: Suit::Diamond,
+            rank: Rank::Trey,
+        };
+        assert_eq!(Card::from(card.to_string()), card);
     }
 }
