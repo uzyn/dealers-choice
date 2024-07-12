@@ -1,5 +1,5 @@
-use crate::*;
+use crate::card::Card;
 
 pub struct Hand {
-    cards: Vec<card::Card>,
+    cards: Vec<Card>,
 }

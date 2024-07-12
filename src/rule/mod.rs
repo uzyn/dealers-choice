@@ -1,5 +1,5 @@
 use crate::hand::Hand;
-
+use crate::showdown::Payouts;
 
 pub trait Rule {
     fn evaluate_hand(hand: &Hand, board: Option<&Hand>) -> u32;
@@ -12,7 +12,7 @@ pub trait Rule {
 
     // Returns a vector of the same size as players with the percentage of pot won
     // If it's a tie, and assuming 2 players, returned value would be vec!<0.5, 0.5>
-    fn determine_winner(players: &Vec<Hand>, board: Option<&Hand>) -> Vec<f32> {
+    fn determine_payouts(players: &[Hand], board: Option<&Hand>) -> Payouts {
         // Default logic for single-pot games, e.g. not hi-lo.
         let mut winner = 0;
         for i in 1..players.len() {
@@ -31,7 +31,7 @@ pub trait Rule {
             }
         }
 
-        let mut payouts: Vec<f32> = vec![0.0; players.len()];
+        let mut payouts: Payouts = vec![0.0; players.len()];
         let pot_split: f32 = 1.0 / winner_count as f32;
         for i in 1..players.len() {
             if winners[i] {
