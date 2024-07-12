@@ -6,7 +6,7 @@ use rand::seq::SliceRandom;
 
 #[derive(Debug)]
 pub struct Deck {
-    cards: Vec<Card>,
+    pub cards: Vec<Card>,
 }
 
 impl Deck {
@@ -40,26 +40,27 @@ mod tests {
     fn get_new_deck() {
         let deck = Deck::new();
         assert_eq!(deck.cards.len(), 52);
-        assert_eq!(deck.cards[0], Card::new(Suit::Club, Rank::Ace));
-        assert_eq!(deck.cards[1], Card::new(Suit::Club, Rank::Deuce));
-        assert_eq!(deck.cards[13], Card::new(Suit::Diamond, Rank::Ace));
-        assert_eq!(deck.cards[51], Card::new(Suit::Spade, Rank::King));
+        assert_eq!(deck.cards[0], Card::new(Suit::Club, Rank::Deuce));
+        assert_eq!(deck.cards[12], Card::new(Suit::Club, Rank::Ace));
+        assert_eq!(deck.cards[13], Card::new(Suit::Diamond, Rank::Deuce));
+        assert_eq!(deck.cards[50], Card::new(Suit::Spade, Rank::King));
+        assert_eq!(deck.cards[51], Card::new(Suit::Spade, Rank::Ace));
     }
 
     #[test]
     fn deck_should_shuffle() {
         let mut deck = Deck::new();
         assert_eq!(deck.cards.len(), 52);
-        assert_eq!(deck.cards[0], Card::new(Suit::Club, Rank::Ace));
-        assert_eq!(deck.cards[13], Card::new(Suit::Diamond, Rank::Ace));
-        assert_eq!(deck.cards[51], Card::new(Suit::Spade, Rank::King));
+        assert_eq!(deck.cards[0], Card::new(Suit::Club, Rank::Deuce));
+        assert_eq!(deck.cards[25], Card::new(Suit::Diamond, Rank::Ace));
+        assert_eq!(deck.cards[50], Card::new(Suit::Spade, Rank::King));
 
         deck.shuffle();
         assert_eq!(deck.cards.len(), 52);
         assert!(
-            (deck.cards[0] != Card::new(Suit::Club, Rank::Ace))
-                || (deck.cards[13] != Card::new(Suit::Diamond, Rank::Ace))
-                || (deck.cards[51] != Card::new(Suit::Spade, Rank::King))
+            (deck.cards[0] != Card::new(Suit::Club, Rank::Deuce))
+                || (deck.cards[25] != Card::new(Suit::Diamond, Rank::Ace))
+                || (deck.cards[50] != Card::new(Suit::Spade, Rank::King))
         );
     }
 }

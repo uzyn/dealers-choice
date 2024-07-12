@@ -27,7 +27,6 @@ impl Suit {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Rank {
-    Ace,
     Deuce,
     Trey,
     Four,
@@ -40,12 +39,12 @@ pub enum Rank {
     Jack,
     Queen,
     King,
+    Ace,
 }
 
 impl std::fmt::Display for Rank {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Rank::Ace => write!(f, "A"),
             Rank::Deuce => write!(f, "2"),
             Rank::Trey => write!(f, "3"),
             Rank::Four => write!(f, "4"),
@@ -58,6 +57,7 @@ impl std::fmt::Display for Rank {
             Rank::Jack => write!(f, "J"),
             Rank::Queen => write!(f, "Q"),
             Rank::King => write!(f, "K"),
+            Rank::Ace => write!(f, "A"),
         }
     }
 }
@@ -65,7 +65,6 @@ impl std::fmt::Display for Rank {
 impl Rank {
     pub fn iter() -> &'static [Rank] {
         static RANKS: [Rank; 13] = [
-            Rank::Ace,
             Rank::Deuce,
             Rank::Trey,
             Rank::Four,
@@ -78,6 +77,7 @@ impl Rank {
             Rank::Jack,
             Rank::Queen,
             Rank::King,
+            Rank::Ace,
         ];
         &RANKS
     }
