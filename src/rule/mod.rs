@@ -15,7 +15,6 @@ pub trait Rule {
     fn determine_payouts(players: &[Hand], board: Option<&Hand>) -> Payouts {
         // Default logic for single-pot games, e.g. not hi-lo.
 
-        // TODO: Save scores so there is no need for double computations
         let mut winner = 0;
         for i in 1..players.len() {
             if Self::compare_hands(&players[i], &players[winner], board) == std::cmp::Ordering::Greater {
@@ -27,7 +26,7 @@ pub trait Rule {
         let mut winners = vec![false; players.len()];
         let mut winner_count = 0;
         for i in 0..players.len() {
-            if Self::compare_hands(&players[i], &players[winner], board) == std::cmp::Ordering::Equal {
+            if i == winner || Self::compare_hands(&players[i], &players[winner], board) == std::cmp::Ordering::Equal {
                 winner_count += 1;
                 winners[i] = true;
             }
