@@ -1,6 +1,6 @@
 use crate::card::Card;
 
-# [derive(Debug)]
+#[derive(Debug)]
 pub struct Hand {
     pub cards: Vec<Card>,
 }

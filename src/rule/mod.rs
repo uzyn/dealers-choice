@@ -17,7 +17,9 @@ pub trait Rule {
 
         let mut winner = 0;
         for i in 1..players.len() {
-            if Self::compare_hands(&players[i], &players[winner], board) == std::cmp::Ordering::Greater {
+            if Self::compare_hands(&players[i], &players[winner], board)
+                == std::cmp::Ordering::Greater
+            {
                 winner = i;
             }
         }
@@ -26,7 +28,10 @@ pub trait Rule {
         let mut winners = vec![false; players.len()];
         let mut winner_count = 0;
         for i in 0..players.len() {
-            if i == winner || Self::compare_hands(&players[i], &players[winner], board) == std::cmp::Ordering::Equal {
+            if i == winner
+                || Self::compare_hands(&players[i], &players[winner], board)
+                    == std::cmp::Ordering::Equal
+            {
                 winner_count += 1;
                 winners[i] = true;
             }
@@ -47,8 +52,8 @@ pub trait Rule {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::hand::Hand;
     use crate::card::{Card, Rank, Suit};
+    use crate::hand::Hand;
 
     struct MockRule {}
 
@@ -69,10 +74,22 @@ mod tests {
         let mut hand3 = Hand::new();
         hand3.cards.push(Card::new(Suit::Spade, Rank::Queen));
 
-        assert_eq!(MockRule::compare_hands(&hand2, &hand3, None), std::cmp::Ordering::Equal);
-        assert_eq!(MockRule::compare_hands(&hand2, &hand2, None), std::cmp::Ordering::Equal); // same hand
-        assert_eq!(MockRule::compare_hands(&hand1, &hand2, None), std::cmp::Ordering::Greater);
-        assert_eq!(MockRule::compare_hands(&hand2, &hand1, None), std::cmp::Ordering::Less);
+        assert_eq!(
+            MockRule::compare_hands(&hand2, &hand3, None),
+            std::cmp::Ordering::Equal
+        );
+        assert_eq!(
+            MockRule::compare_hands(&hand2, &hand2, None),
+            std::cmp::Ordering::Equal
+        ); // same hand
+        assert_eq!(
+            MockRule::compare_hands(&hand1, &hand2, None),
+            std::cmp::Ordering::Greater
+        );
+        assert_eq!(
+            MockRule::compare_hands(&hand2, &hand1, None),
+            std::cmp::Ordering::Less
+        );
     }
 
     #[test]
@@ -107,6 +124,6 @@ mod tests {
 
         let players = vec![hand1, hand2, hand3, hand4];
         let payouts = MockRule::determine_payouts(&players, None);
-        assert_eq!(payouts, vec![0.0, 1.0/3.0, 1.0/3.0, 1.0/3.0]);
+        assert_eq!(payouts, vec![0.0, 1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0]);
     }
 }
