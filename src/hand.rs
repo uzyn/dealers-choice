@@ -21,15 +21,28 @@ impl Default for Hand {
 
 impl std::fmt::Display for Hand {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        for card in &self.cards {
-            write!(f, "{}", card)?;
+        for card in &self.cards[..self.cards.len() - 1] {
+            write!(f, "{} ", card)?;
+        }
+        if let Some(last_card) = self.cards.last() {
+            write!(f, "{}", last_card)?;
         }
         Ok(())
     }
 }
 
 impl From<Vec<Card>> for Hand {
-    fn from(cards: Vec<Card>) -> Self {
+    fn from(cards: Vec<Card>) -> Hand {
+        Hand { cards }
+    }
+}
+
+impl From<String> for Hand {
+    fn from(s: String) -> Hand {
+        let mut cards: Vec<Card> = Vec::new();
+        for card_str in s.split_whitespace() {
+            cards.push(Card::from(card_str.to_string()));
+        }
         Hand { cards }
     }
 }
@@ -51,7 +64,7 @@ mod tests {
         hand.cards.push(Card::new(Suit::Club, Rank::King));
         hand.cards.push(Card::new(Suit::Diamond, Rank::Deuce));
         hand.cards.push(Card::new(Suit::Heart, Rank::Jack));
-        assert_eq!(hand.to_string(), "Kc2dJh");
+        assert_eq!(hand.to_string(), "Kc 2d Jh");
     }
 
     #[test]
@@ -60,6 +73,6 @@ mod tests {
         let deck = Deck::new();
         let hand = Hand::from(deck.cards);
         assert_eq!(hand.cards.len(), 52);
-        assert_eq!(hand.to_string(), "2c3c4c5c6c7c8c9cTcJcQcKcAc2d3d4d5d6d7d8d9dTdJdQdKdAd2h3h4h5h6h7h8h9hThJhQhKhAh2s3s4s5s6s7s8s9sTsJsQsKsAs");
+        assert_eq!(hand.to_string(), "2c 3c 4c 5c 6c 7c 8c 9c Tc Jc Qc Kc Ac 2d 3d 4d 5d 6d 7d 8d 9d Td Jd Qd Kd Ad 2h 3h 4h 5h 6h 7h 8h 9h Th Jh Qh Kh Ah 2s 3s 4s 5s 6s 7s 8s 9s Ts Js Qs Ks As");
     }
 }
