@@ -9,6 +9,8 @@ impl Hand {
     pub fn new() -> Hand {
         Hand { cards: Vec::new() }
     }
+
+    //TODO: Sort and display of Hand
 }
 
 impl Default for Hand {

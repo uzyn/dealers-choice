@@ -7,7 +7,6 @@ pub trait Rule {
     fn compare_hands(hand1: &Hand, hand2: &Hand, board: Option<&Hand>) -> std::cmp::Ordering {
         let score1 = Self::evaluate_hand(hand1, board);
         let score2 = Self::evaluate_hand(hand2, board);
-        dbg!(score1, score2, score1.cmp(&score2));
         score1.cmp(&score2)
     }
 
@@ -19,17 +18,15 @@ pub trait Rule {
         // TODO: Save scores so there is no need for double computations
         let mut winner = 0;
         for i in 1..players.len() {
-            if Self::compare_hands(&players[i], &players[winner], board) == std::cmp::Ordering::Less {
+            if Self::compare_hands(&players[i], &players[winner], board) == std::cmp::Ordering::Greater {
                 winner = i;
             }
         }
 
-        dbg!("Winner", winner);
-
         // Check for ties
         let mut winners = vec![false; players.len()];
         let mut winner_count = 0;
-        for i in 1..players.len() {
+        for i in 0..players.len() {
             if Self::compare_hands(&players[i], &players[winner], board) == std::cmp::Ordering::Equal {
                 winner_count += 1;
                 winners[i] = true;
@@ -38,7 +35,7 @@ pub trait Rule {
 
         let mut payouts: Payouts = vec![0.0; players.len()];
         let pot_split: f32 = 1.0 / winner_count as f32;
-        for i in 1..players.len() {
+        for i in 0..players.len() {
             if winners[i] {
                 payouts[i] = pot_split;
             }
@@ -58,12 +55,7 @@ mod tests {
 
     impl Rule for MockRule {
         fn evaluate_hand(hand: &Hand, _board: Option<&Hand>) -> u32 {
-            let mut score: u32 = 0;
-            for card in &hand.cards {
-                score += card.rank as u32;
-            }
-            dbg!(hand, score);
-            score
+            hand.cards[0].rank as u32
         }
     }
 
@@ -79,23 +71,43 @@ mod tests {
         hand3.cards.push(Card::new(Suit::Spade, Rank::Queen));
 
         assert_eq!(MockRule::compare_hands(&hand2, &hand3, None), std::cmp::Ordering::Equal);
+        assert_eq!(MockRule::compare_hands(&hand2, &hand2, None), std::cmp::Ordering::Equal); // same hand
         assert_eq!(MockRule::compare_hands(&hand1, &hand2, None), std::cmp::Ordering::Greater);
         assert_eq!(MockRule::compare_hands(&hand2, &hand1, None), std::cmp::Ordering::Less);
     }
 
-//     #[test]
-//     fn test_determine_payouts() {
-//         let mut hand1 = Hand::new();
-//         hand1.cards.push(Card::new(Suit::Diamond, Rank::King));
+    #[test]
+    fn test_determine_payouts() {
+        let mut hand1 = Hand::new();
+        hand1.cards.push(Card::new(Suit::Diamond, Rank::King));
 
-//         let mut hand2 = Hand::new();
-//         hand2.cards.push(Card::new(Suit::Heart, Rank::Queen));
+        let mut hand2 = Hand::new();
+        hand2.cards.push(Card::new(Suit::Heart, Rank::Queen));
 
-//         let mut hand3 = Hand::new();
-//         hand3.cards.push(Card::new(Suit::Heart, Rank::Trey));
+        let mut hand3 = Hand::new();
+        hand3.cards.push(Card::new(Suit::Heart, Rank::Trey));
 
-//         let players = vec![hand1, hand2, hand3];
-//         let payouts = MockRule::determine_payouts(&players, None);
-//         assert_eq!(payouts, vec![0.5, 0.0, 0.5]);
-//     }
+        let players = vec![hand1, hand2, hand3];
+        let payouts = MockRule::determine_payouts(&players, None);
+        assert_eq!(payouts, vec![1.0, 0.0, 0.0]);
+    }
+
+    #[test]
+    fn test_split_payouts() {
+        let mut hand1 = Hand::new();
+        hand1.cards.push(Card::new(Suit::Diamond, Rank::Four));
+
+        let mut hand2 = Hand::new();
+        hand2.cards.push(Card::new(Suit::Heart, Rank::Queen));
+
+        let mut hand3 = Hand::new();
+        hand3.cards.push(Card::new(Suit::Club, Rank::Queen));
+
+        let mut hand4 = Hand::new();
+        hand4.cards.push(Card::new(Suit::Spade, Rank::Queen));
+
+        let players = vec![hand1, hand2, hand3, hand4];
+        let payouts = MockRule::determine_payouts(&players, None);
+        assert_eq!(payouts, vec![0.0, 1.0/3.0, 1.0/3.0, 1.0/3.0]);
+    }
 }
