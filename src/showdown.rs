@@ -1,7 +1,22 @@
-use crate::*;
 
-pub struct Showdown<'a> {
-    rule: &'a dyn rule::Rule,
-    players: Vec<hand::Hand>,
-    board: Option<hand::Hand>,
+// use Rule for trait, error: no Rule in rule
+use crate::rule::Rule;
+
+
+use crate::hand::Hand;
+
+pub type Payouts = Vec<f32>;
+
+pub struct Showdown {
+    players: Vec<Hand>,
+    board: Option<Hand>,
+}
+impl Showdown {
+    pub fn new(players: Vec<Hand>, board: Option<Hand>) -> Showdown {
+        Showdown { players, board }
+    }
+
+    pub fn determine_payouts<R: Rule>(&self) -> Payouts {
+        R::determine_payouts(&self.players, self.board.as_ref())
+    }
 }
