@@ -1,4 +1,8 @@
+
+// use Rule for trait, error: no Rule in rule
 use crate::rule::Rule;
+
+
 use crate::hand::Hand;
 
 pub type Payouts = Vec<f32>;

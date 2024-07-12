@@ -7,6 +7,7 @@ pub trait Rule {
     fn compare_hands(hand1: &Hand, hand2: &Hand, board: Option<&Hand>) -> std::cmp::Ordering {
         let score1 = Self::evaluate_hand(hand1, board);
         let score2 = Self::evaluate_hand(hand2, board);
+        dbg!(score1, score2, score1.cmp(&score2));
         score1.cmp(&score2)
     }
 
@@ -14,12 +15,16 @@ pub trait Rule {
     // If it's a tie, and assuming 2 players, returned value would be vec!<0.5, 0.5>
     fn determine_payouts(players: &[Hand], board: Option<&Hand>) -> Payouts {
         // Default logic for single-pot games, e.g. not hi-lo.
+
+        // TODO: Save scores so there is no need for double computations
         let mut winner = 0;
         for i in 1..players.len() {
-            if Self::compare_hands(&players[i], &players[winner], board) == std::cmp::Ordering::Greater {
+            if Self::compare_hands(&players[i], &players[winner], board) == std::cmp::Ordering::Less {
                 winner = i;
             }
         }
+
+        dbg!("Winner", winner);
 
         // Check for ties
         let mut winners = vec![false; players.len()];
@@ -41,4 +46,56 @@ pub trait Rule {
 
         payouts
     }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::hand::Hand;
+    use crate::card::{Card, Rank, Suit};
+
+    struct MockRule {}
+
+    impl Rule for MockRule {
+        fn evaluate_hand(hand: &Hand, _board: Option<&Hand>) -> u32 {
+            let mut score: u32 = 0;
+            for card in &hand.cards {
+                score += card.rank as u32;
+            }
+            dbg!(hand, score);
+            score
+        }
+    }
+
+    #[test]
+    fn test_compare_hands() {
+        let mut hand1 = Hand::new();
+        hand1.cards.push(Card::new(Suit::Diamond, Rank::King));
+
+        let mut hand2 = Hand::new();
+        hand2.cards.push(Card::new(Suit::Heart, Rank::Queen));
+
+        let mut hand3 = Hand::new();
+        hand3.cards.push(Card::new(Suit::Spade, Rank::Queen));
+
+        assert_eq!(MockRule::compare_hands(&hand2, &hand3, None), std::cmp::Ordering::Equal);
+        assert_eq!(MockRule::compare_hands(&hand1, &hand2, None), std::cmp::Ordering::Greater);
+        assert_eq!(MockRule::compare_hands(&hand2, &hand1, None), std::cmp::Ordering::Less);
+    }
+
+//     #[test]
+//     fn test_determine_payouts() {
+//         let mut hand1 = Hand::new();
+//         hand1.cards.push(Card::new(Suit::Diamond, Rank::King));
+
+//         let mut hand2 = Hand::new();
+//         hand2.cards.push(Card::new(Suit::Heart, Rank::Queen));
+
+//         let mut hand3 = Hand::new();
+//         hand3.cards.push(Card::new(Suit::Heart, Rank::Trey));
+
+//         let players = vec![hand1, hand2, hand3];
+//         let payouts = MockRule::determine_payouts(&players, None);
+//         assert_eq!(payouts, vec![0.5, 0.0, 0.5]);
+//     }
 }
