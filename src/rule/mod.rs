@@ -1,6 +1,14 @@
 use crate::hand::Hand;
 use crate::showdown::Payouts;
 
+pub mod razz;
+
+#[derive(Debug, Ord, PartialOrd, Eq, PartialEq)]
+pub enum RuleError {
+    InvalidHand,
+    InvalidBoard,
+}
+
 pub trait Rule {
     fn evaluate_hand(hand: &Hand, board: Option<&Hand>) -> u32;
 
@@ -10,9 +18,16 @@ pub trait Rule {
         score1.cmp(&score2)
     }
 
+    // Insert custom rule validity check here, e.g. ensuring that there are 2 cards per player and 5 community cards for hold'em.
+    fn is_valid(_players: &[Hand], _board: Option<&Hand>) -> Result<(), RuleError> {
+        Ok(())
+    }
+
     // Returns a vector of the same size as players with the percentage of pot won
     // If it's a tie, and assuming 2 players, returned value would be vec!<0.5, 0.5>
-    fn determine_payouts(players: &[Hand], board: Option<&Hand>) -> Payouts {
+    fn determine_payouts(players: &[Hand], board: Option<&Hand>) -> Result<Payouts, RuleError> {
+        Self::is_valid(players, board)?;
+
         // Default logic for single-pot games, e.g. not hi-lo.
 
         let mut winner = 0;
@@ -45,7 +60,7 @@ pub trait Rule {
             }
         }
 
-        payouts
+        Ok(payouts)
     }
 }
 
@@ -105,7 +120,7 @@ mod tests {
 
         let players = vec![hand1, hand2, hand3];
         let payouts = MockRule::determine_payouts(&players, None);
-        assert_eq!(payouts, vec![1.0, 0.0, 0.0]);
+        assert_eq!(payouts, Ok(vec![1.0, 0.0, 0.0]));
     }
 
     #[test]
@@ -124,6 +139,6 @@ mod tests {
 
         let players = vec![hand1, hand2, hand3, hand4];
         let payouts = MockRule::determine_payouts(&players, None);
-        assert_eq!(payouts, vec![0.0, 1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0]);
+        assert_eq!(payouts, Ok(vec![0.0, 1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0]));
     }
 }

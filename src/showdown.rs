@@ -1,5 +1,5 @@
 // use Rule for trait, error: no Rule in rule
-use crate::rule::Rule;
+use crate::rule::{Rule, RuleError};
 
 use crate::hand::Hand;
 
@@ -14,7 +14,7 @@ impl Showdown {
         Showdown { players, board }
     }
 
-    pub fn determine_payouts<R: Rule>(&self) -> Payouts {
+    pub fn determine_payouts<R: Rule>(&self) -> Result<Payouts, RuleError> {
         R::determine_payouts(&self.players, self.board.as_ref())
     }
 }
