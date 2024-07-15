@@ -1,6 +1,16 @@
 use crate::hand::Hand;
 use crate::showdown::Payouts;
 
+pub enum EvaluationRule {
+    High,
+    Lowball(LowballType),
+}
+pub enum LowballType {
+    AceToFive,
+    DeuceToSeven,
+    Badugi,
+}
+
 pub mod razz;
 
 #[derive(Debug, Ord, PartialOrd, Eq, PartialEq)]
@@ -25,7 +35,10 @@ pub trait Evaluation {
 
     // Returns a vector of the same size as players with the percentage of pot won
     // If it's a tie, and assuming 2 players, returned value would be vec!<0.5, 0.5>
-    fn determine_payouts(players: &[Hand], board: Option<&Hand>) -> Result<Payouts, EvaluationError> {
+    fn determine_payouts(
+        players: &[Hand],
+        board: Option<&Hand>,
+    ) -> Result<Payouts, EvaluationError> {
         Self::is_valid(players, board)?;
 
         // Default logic for single-pot games, e.g. not hi-lo.

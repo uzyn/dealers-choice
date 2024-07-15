@@ -74,7 +74,10 @@ mod tests {
         hand2.cards.push(Card::new(Suit::Spade, Rank::Seven));
 
         let players = vec![hand1, hand2];
-        assert_eq!(Razz::is_valid(&players, None), Err(EvaluationError::InvalidHand));
+        assert_eq!(
+            Razz::is_valid(&players, None),
+            Err(EvaluationError::InvalidHand)
+        );
     }
 
     #[test]
