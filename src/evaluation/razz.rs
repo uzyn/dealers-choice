@@ -3,29 +3,29 @@ use super::*;
 #[derive(Debug, Ord, PartialOrd, Eq, PartialEq)]
 pub struct Razz {}
 
-impl Rule for Razz {
+impl Evaluation for Razz {
     fn evaluate_hand(_hand: &Hand, _board: Option<&Hand>) -> u32 {
         0 // TODO: replace dummy
     }
 
-    fn is_valid(players: &[Hand], board: Option<&Hand>) -> Result<(), RuleError> {
+    fn is_valid(players: &[Hand], board: Option<&Hand>) -> Result<(), EvaluationError> {
         // Check that hand is 5-7 cards and that the numbers are the same for all players.
         let mut players_hand_card_count = 0;
         for player in players {
             if player.cards.len() < 5 || player.cards.len() > 7 {
-                return Err(RuleError::InvalidHand);
+                return Err(EvaluationError::InvalidHand);
             }
             players_hand_card_count = player.cards.len();
         }
         for player in players {
             if player.cards.len() != players_hand_card_count {
-                return Err(RuleError::InvalidHand);
+                return Err(EvaluationError::InvalidHand);
             }
         }
 
         // Also ensure that there are no boards
         if board.is_some() {
-            return Err(RuleError::InvalidBoard);
+            return Err(EvaluationError::InvalidBoard);
         }
 
         Ok(())
@@ -74,7 +74,7 @@ mod tests {
         hand2.cards.push(Card::new(Suit::Spade, Rank::Seven));
 
         let players = vec![hand1, hand2];
-        assert_eq!(Razz::is_valid(&players, None), Err(RuleError::InvalidHand));
+        assert_eq!(Razz::is_valid(&players, None), Err(EvaluationError::InvalidHand));
     }
 
     #[test]
@@ -103,7 +103,7 @@ mod tests {
         let players = vec![hand1, hand2];
         assert_eq!(
             Razz::is_valid(&players, Some(&board)),
-            Err(RuleError::InvalidBoard)
+            Err(EvaluationError::InvalidBoard)
         );
     }
 }
