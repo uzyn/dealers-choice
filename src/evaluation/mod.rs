@@ -1,5 +1,5 @@
-use crate::hand::Hand;
 use crate::error::Error;
+use crate::hand::Hand;
 
 pub trait Evaluation {
     fn eval_hand(hand: &Hand) -> Result<u32, Error>;

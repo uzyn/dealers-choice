@@ -36,4 +36,34 @@ mod tests {
         let result = Highcard::eval_hand(&hand);
         assert_eq!(result, Err(Error::InvalidHand));
     }
+
+    // test compare_hands
+    #[test]
+    fn test_compare_hands() {
+        let mut hand1 = Hand::new();
+        hand1.cards.push(Card::new(Suit::Diamond, Rank::King));
+
+        let mut hand2 = Hand::new();
+        hand2.cards.push(Card::new(Suit::Heart, Rank::Queen));
+
+        let mut hand3 = Hand::new();
+        hand3.cards.push(Card::new(Suit::Spade, Rank::Queen));
+
+        assert_eq!(
+            Highcard::compare_hands(&hand1, &hand2),
+            std::cmp::Ordering::Greater
+        );
+        assert_eq!(
+            Highcard::compare_hands(&hand2, &hand1),
+            std::cmp::Ordering::Less
+        );
+        assert_eq!(
+            Highcard::compare_hands(&hand1, &hand1),
+            std::cmp::Ordering::Equal
+        );
+        assert_eq!(
+            Highcard::compare_hands(&hand2, &hand3),
+            std::cmp::Ordering::Equal
+        );
+    }
 }
