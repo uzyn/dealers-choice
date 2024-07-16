@@ -105,6 +105,17 @@ impl Card {
             OrderFirstBy::Rank => (self.rank as u8) * 4 + (self.suit as u8),
         }
     }
+
+    fn cmp_ord_first_by(&self, other: &Card, order_first_by: OrderFirstBy) -> std::cmp::Ordering {
+        match order_first_by {
+            OrderFirstBy::Rank => self
+                .ord_position(OrderFirstBy::Rank)
+                .cmp(&other.ord_position(OrderFirstBy::Rank)),
+            OrderFirstBy::Suit => self
+                .ord_position(OrderFirstBy::Suit)
+                .cmp(&other.ord_position(OrderFirstBy::Suit)),
+        }
+    }
 }
 
 impl std::fmt::Display for Card {
@@ -142,11 +153,17 @@ impl From<String> for Card {
     }
 }
 
-// impl Ord for Card {
-//     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-//         self.suit.cmp(&other.suit).then_with(|| self.rank.cmp(&other.rank))
-//     }
-// }
+impl Ord for Card {
+    fn cmp(&self, other: &Card) -> std::cmp::Ordering {
+        self.cmp_ord_first_by(other, OrderFirstBy::Rank) // default via Rank
+    }
+}
+
+impl PartialOrd for Card {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -219,7 +236,6 @@ mod tests {
         assert_eq!(Card::from(card.to_string()), card);
     }
 
-    // Test card score, use Card::from<string> and not Card::new
     #[test]
     fn test_card_ord_position() {
         let card1 = Card::from("As".to_string());
@@ -236,5 +252,66 @@ mod tests {
         assert_eq!(card2.ord_position(OrderFirstBy::Rank), 0 * 4 + 0);
         assert_eq!(card3.ord_position(OrderFirstBy::Rank), 12 * 4 + 1);
         assert_eq!(card4.ord_position(OrderFirstBy::Rank), 0 * 4 + 1);
+    }
+
+    // test compare
+    #[test]
+    fn test_card_cmp() {
+        let card1 = Card::from("As".to_string());
+        let card2 = Card::from("2c".to_string());
+        let card3 = Card::from("Ad".to_string());
+        let card4 = Card::from("2d".to_string());
+
+        assert_eq!(
+            card1.cmp_ord_first_by(&card2, OrderFirstBy::Rank),
+            std::cmp::Ordering::Greater
+        );
+        assert_eq!(
+            card2.cmp_ord_first_by(&card1, OrderFirstBy::Rank),
+            std::cmp::Ordering::Less
+        );
+        assert_eq!(
+            card1.cmp_ord_first_by(&card3, OrderFirstBy::Rank),
+            std::cmp::Ordering::Greater
+        );
+        assert_eq!(
+            card2.cmp_ord_first_by(&card4, OrderFirstBy::Rank),
+            std::cmp::Ordering::Less
+        );
+
+        assert_eq!(
+            card1.cmp_ord_first_by(&card2, OrderFirstBy::Suit),
+            std::cmp::Ordering::Greater
+        );
+        assert_eq!(
+            card2.cmp_ord_first_by(&card1, OrderFirstBy::Suit),
+            std::cmp::Ordering::Less
+        );
+        assert_eq!(
+            card1.cmp_ord_first_by(&card3, OrderFirstBy::Suit),
+            std::cmp::Ordering::Greater
+        );
+        assert_eq!(
+            card2.cmp_ord_first_by(&card4, OrderFirstBy::Suit),
+            std::cmp::Ordering::Less
+        );
+
+        assert_eq!(card1.cmp(&card2), std::cmp::Ordering::Greater);
+        assert_eq!(card2.cmp(&card1), std::cmp::Ordering::Less);
+        assert_eq!(card1.cmp(&card3), std::cmp::Ordering::Greater);
+        assert_eq!(card2.cmp(&card4), std::cmp::Ordering::Less);
+    }
+
+    #[test]
+    fn test_card_ord() {
+        let card1 = Card::from("As".to_string());
+        let card2 = Card::from("2c".to_string());
+        let card3 = Card::from("Ad".to_string());
+        let card4 = Card::from("2d".to_string());
+
+        assert!(card1 > card2);
+        assert!(card2 < card1);
+        assert!(card1 > card3);
+        assert!(card2 < card4);
     }
 }
