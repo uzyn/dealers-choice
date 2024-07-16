@@ -43,8 +43,14 @@ mod tests {
 
     #[test]
     fn test_eval_hand_invalid() {
-        assert_eq!(LowballAto5::eval_hand(&Hand::from("Ac 2c 3d 4h".to_string())), Err(Error::InvalidHand));
+        assert_eq!(
+            LowballAto5::eval_hand(&Hand::from("Ac 2c 3d 4h".to_string())),
+            Err(Error::InvalidHand)
+        );
         assert!(LowballAto5::eval_hand(&Hand::from("Ac 2c 3d 4h 5c".to_string())).is_ok());
-        assert_eq!(LowballAto5::eval_hand(&Hand::from("Ac 2c 3d 4h 5c 6d".to_string())), Err(Error::InvalidHand));
+        assert_eq!(
+            LowballAto5::eval_hand(&Hand::from("Ac 2c 3d 4h 5c 6d".to_string())),
+            Err(Error::InvalidHand)
+        );
     }
 }

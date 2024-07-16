@@ -1,6 +1,6 @@
 use crate::card::Card;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Hand {
     pub cards: Vec<Card>,
 }
@@ -10,7 +10,16 @@ impl Hand {
         Hand { cards: Vec::new() }
     }
 
-    //TODO: Sort
+    pub fn new_sorted_by_rank(&self) -> Hand {
+        // Make a copy of Hand, sort and return the copy
+        let mut hand = self.clone();
+        hand.cards.sort_by(|a, b| a.rank.cmp(&b.rank));
+        hand
+    }
+
+    // pub fn sort_by_suit(&self) -> Hand {
+    //     self.cards.sort_by(|a, b| a.suit.cmp(&b.suit))
+    // }
 }
 
 impl Default for Hand {

@@ -25,7 +25,7 @@ impl Suit {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Rank {
     Deuce,
     Trey,
@@ -83,6 +83,11 @@ impl Rank {
     }
 }
 
+pub enum OrderFirstBy {
+    Suit,
+    Rank,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Card {
     pub suit: Suit,
@@ -92,6 +97,13 @@ pub struct Card {
 impl Card {
     pub fn new(suit: Suit, rank: Rank) -> Card {
         Card { suit, rank }
+    }
+
+    pub fn ord_position(&self, order_first_by: OrderFirstBy) -> u8 {
+        match order_first_by {
+            OrderFirstBy::Suit => (self.suit as u8) * 13 + (self.rank as u8),
+            OrderFirstBy::Rank => (self.rank as u8) * 4 + (self.suit as u8),
+        }
     }
 }
 
@@ -129,6 +141,12 @@ impl From<String> for Card {
         Card { suit, rank }
     }
 }
+
+// impl Ord for Card {
+//     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+//         self.suit.cmp(&other.suit).then_with(|| self.rank.cmp(&other.rank))
+//     }
+// }
 
 #[cfg(test)]
 mod tests {
@@ -199,5 +217,24 @@ mod tests {
             rank: Rank::Trey,
         };
         assert_eq!(Card::from(card.to_string()), card);
+    }
+
+    // Test card score, use Card::from<string> and not Card::new
+    #[test]
+    fn test_card_ord_position() {
+        let card1 = Card::from("As".to_string());
+        let card2 = Card::from("2c".to_string());
+        let card3 = Card::from("Ad".to_string());
+        let card4 = Card::from("2d".to_string());
+
+        assert_eq!(card1.ord_position(OrderFirstBy::Suit), 3 * 13 + 12);
+        assert_eq!(card2.ord_position(OrderFirstBy::Suit), 0 * 13 + 0);
+        assert_eq!(card3.ord_position(OrderFirstBy::Suit), 1 * 13 + 12);
+        assert_eq!(card4.ord_position(OrderFirstBy::Suit), 1 * 13 + 0);
+
+        assert_eq!(card1.ord_position(OrderFirstBy::Rank), 12 * 4 + 3);
+        assert_eq!(card2.ord_position(OrderFirstBy::Rank), 0 * 4 + 0);
+        assert_eq!(card3.ord_position(OrderFirstBy::Rank), 12 * 4 + 1);
+        assert_eq!(card4.ord_position(OrderFirstBy::Rank), 0 * 4 + 1);
     }
 }
