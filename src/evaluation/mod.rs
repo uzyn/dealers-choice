@@ -12,3 +12,4 @@ pub trait Evaluation {
 }
 
 pub mod highcard;
+pub mod lowball_ato5;

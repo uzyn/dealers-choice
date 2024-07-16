@@ -1,10 +1,11 @@
 use super::*;
 
+// Simple evaluation algorithm mainly for testing
 pub struct Highcard {}
 
 impl Evaluation for Highcard {
     fn eval_hand(hand: &Hand) -> Result<u32, Error> {
-        if hand.cards.len() > 1 {
+        if hand.cards.len() != 1 {
             return Err(Error::InvalidHand);
         }
         Ok(hand.cards[0].rank as u32)
