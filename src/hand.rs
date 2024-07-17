@@ -10,16 +10,9 @@ impl Hand {
         Hand { cards: Vec::new() }
     }
 
-    pub fn new_sorted_by_rank(&self) -> Hand {
-        // Make a copy of Hand, sort and return the copy
-        let mut hand = self.clone();
-        hand.cards.sort_by(|a, b| a.rank.cmp(&b.rank));
-        hand
+    pub fn sort_cards(&mut self, order_first_by: crate::card::OrderFirstBy) {
+        self.cards.sort_by(|a, b| a.ord_position(order_first_by).cmp(&b.ord_position(order_first_by)));
     }
-
-    // pub fn sort_by_suit(&self) -> Hand {
-    //     self.cards.sort_by(|a, b| a.suit.cmp(&b.suit))
-    // }
 }
 
 impl Default for Hand {
@@ -91,5 +84,21 @@ mod tests {
         assert_eq!(hand.cards.len(), 5);
         assert_eq!(hand.to_string(), "2c Ts 9h 9s Ad");
         assert_eq!(hand.cards[1], Card::new(Suit::Spade, Rank::Ten));
+    }
+
+    // Test sort cards by rank, use Hand::from(<string>) rather than Hand::new
+    #[test]
+    fn sort_cards_by_rank() {
+        let mut hand = Hand::from("Ac 4c 2c 4h Qs 4s 3d".to_string());
+        hand.sort_cards(crate::card::OrderFirstBy::Rank);
+        assert_eq!(hand.to_string(), "2c 3d 4s 4h 4c Qs Ac");
+    }
+
+    // Test sort cards by suit, use Hand::from(<string>) rather than Hand::new
+    #[test]
+    fn sort_cards_by_suit() {
+        let mut hand = Hand::from("Ac 4c 2c 4h Qs 4s 3d".to_string());
+        hand.sort_cards(crate::card::OrderFirstBy::Suit);
+        assert_eq!(hand.to_string(), "4s Qs 4h 3d 2c 4c Ac");
     }
 }

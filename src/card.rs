@@ -1,9 +1,9 @@
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Suit {
-    Club,
-    Diamond,
-    Heart,
     Spade,
+    Heart,
+    Diamond,
+    Club,
 }
 
 // Return "c" for Club, "d" for Diamond, "h" for Heart, and "s" for Spade
@@ -83,6 +83,7 @@ impl Rank {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum OrderFirstBy {
     Suit,
     Rank,
@@ -243,15 +244,15 @@ mod tests {
         let card3 = Card::from("Ad".to_string());
         let card4 = Card::from("2d".to_string());
 
-        assert_eq!(card1.ord_position(OrderFirstBy::Suit), 3 * 13 + 12);
-        assert_eq!(card2.ord_position(OrderFirstBy::Suit), 0 * 13 + 0);
-        assert_eq!(card3.ord_position(OrderFirstBy::Suit), 1 * 13 + 12);
-        assert_eq!(card4.ord_position(OrderFirstBy::Suit), 1 * 13 + 0);
+        assert_eq!(card1.ord_position(OrderFirstBy::Suit), 0 * 13 + 12);
+        assert_eq!(card2.ord_position(OrderFirstBy::Suit), 3 * 13 + 0);
+        assert_eq!(card3.ord_position(OrderFirstBy::Suit), 2 * 13 + 12);
+        assert_eq!(card4.ord_position(OrderFirstBy::Suit), 2 * 13 + 0);
 
-        assert_eq!(card1.ord_position(OrderFirstBy::Rank), 12 * 4 + 3);
-        assert_eq!(card2.ord_position(OrderFirstBy::Rank), 0 * 4 + 0);
-        assert_eq!(card3.ord_position(OrderFirstBy::Rank), 12 * 4 + 1);
-        assert_eq!(card4.ord_position(OrderFirstBy::Rank), 0 * 4 + 1);
+        assert_eq!(card1.ord_position(OrderFirstBy::Rank), 12 * 4 + 0);
+        assert_eq!(card2.ord_position(OrderFirstBy::Rank), 0 * 4 + 3);
+        assert_eq!(card3.ord_position(OrderFirstBy::Rank), 12 * 4 + 2);
+        assert_eq!(card4.ord_position(OrderFirstBy::Rank), 0 * 4 + 2);
     }
 
     // test compare
@@ -272,34 +273,34 @@ mod tests {
         );
         assert_eq!(
             card1.cmp_ord_first_by(&card3, OrderFirstBy::Rank),
-            std::cmp::Ordering::Greater
+            std::cmp::Ordering::Less
         );
         assert_eq!(
             card2.cmp_ord_first_by(&card4, OrderFirstBy::Rank),
-            std::cmp::Ordering::Less
+            std::cmp::Ordering::Greater
         );
 
         assert_eq!(
             card1.cmp_ord_first_by(&card2, OrderFirstBy::Suit),
-            std::cmp::Ordering::Greater
+            std::cmp::Ordering::Less
         );
         assert_eq!(
             card2.cmp_ord_first_by(&card1, OrderFirstBy::Suit),
-            std::cmp::Ordering::Less
-        );
-        assert_eq!(
-            card1.cmp_ord_first_by(&card3, OrderFirstBy::Suit),
             std::cmp::Ordering::Greater
         );
         assert_eq!(
-            card2.cmp_ord_first_by(&card4, OrderFirstBy::Suit),
+            card1.cmp_ord_first_by(&card3, OrderFirstBy::Suit),
             std::cmp::Ordering::Less
+        );
+        assert_eq!(
+            card2.cmp_ord_first_by(&card4, OrderFirstBy::Suit),
+            std::cmp::Ordering::Greater
         );
 
         assert_eq!(card1.cmp(&card2), std::cmp::Ordering::Greater);
         assert_eq!(card2.cmp(&card1), std::cmp::Ordering::Less);
-        assert_eq!(card1.cmp(&card3), std::cmp::Ordering::Greater);
-        assert_eq!(card2.cmp(&card4), std::cmp::Ordering::Less);
+        assert_eq!(card1.cmp(&card3), std::cmp::Ordering::Less);
+        assert_eq!(card2.cmp(&card4), std::cmp::Ordering::Greater);
     }
 
     #[test]
@@ -311,7 +312,7 @@ mod tests {
 
         assert!(card1 > card2);
         assert!(card2 < card1);
-        assert!(card1 > card3);
-        assert!(card2 < card4);
+        assert!(card1 < card3);
+        assert!(card2 > card4);
     }
 }
