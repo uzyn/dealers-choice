@@ -263,7 +263,35 @@ mod tests {
         assert_eq!(card4.ord_position(OrderFirstBy::Rank), 0 * 4 + 2);
     }
 
-    // test compare
+    #[test]
+    fn test_card_try_from_error() {
+        assert_eq!(
+            Card::try_from("A".to_string()),
+            Err(Error::InvalidCardNotation)
+        );
+        assert_eq!(
+            Card::try_from("Acx".to_string()),
+            Err(Error::InvalidCardNotation)
+        );
+        assert_eq!(
+            Card::try_from("1c".to_string()),
+            Err(Error::InvalidCardNotation)
+        );
+        assert_eq!(
+            Card::try_from("Bc".to_string()),
+            Err(Error::InvalidCardNotation)
+        );
+        assert_eq!(
+            Card::try_from("AD".to_string()),
+            Err(Error::InvalidCardNotation)
+        );
+        assert_eq!(
+            Card::try_from("Ad ".to_string()), // untrimmed
+            Err(Error::InvalidCardNotation)
+        );
+        assert!(Card::try_from("Ad".to_string()).is_ok());
+    }
+
     #[test]
     fn test_card_cmp() {
         let card1 = Card::try_from("As".to_string()).unwrap();

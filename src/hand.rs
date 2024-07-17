@@ -11,7 +11,10 @@ impl Hand {
     }
 
     pub fn sort_cards(&mut self, order_first_by: crate::card::OrderFirstBy) {
-        self.cards.sort_by(|a, b| a.ord_position(order_first_by).cmp(&b.ord_position(order_first_by)));
+        self.cards.sort_by(|a, b| {
+            a.ord_position(order_first_by)
+                .cmp(&b.ord_position(order_first_by))
+        });
     }
 }
 
