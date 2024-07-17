@@ -32,6 +32,7 @@ The following games are in consideration for the library:
 
 Not in consideration at the moment:
 
+* Short Deck
 * Pineapple
 * Chinese
 * Flip & Go
