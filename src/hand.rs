@@ -43,7 +43,7 @@ impl From<String> for Hand {
     fn from(s: String) -> Hand {
         let mut cards: Vec<Card> = Vec::new();
         for card_str in s.split_whitespace() {
-            cards.push(Card::from(card_str.to_string()));
+            cards.push(Card::try_from(card_str.to_string()).unwrap());
         }
         Hand { cards }
     }
