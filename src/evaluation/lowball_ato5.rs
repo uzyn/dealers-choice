@@ -28,15 +28,15 @@ mod tests {
     #[test]
     fn test_eval_hand_valid() {
         assert_eq!(
-            LowballAto5::eval_hand(&Hand::from("Ac 2c 3d 4h 5s".to_string())),
+            LowballAto5::eval_hand(&Hand::try_from("Ac 2c 3d 4h 5s".to_string()).unwrap()),
             Ok(31)
         );
         assert_eq!(
-            LowballAto5::eval_hand(&Hand::from("Ac 2d 3h 4s 6c".to_string())),
+            LowballAto5::eval_hand(&Hand::try_from("Ac 2d 3h 4s 6c".to_string()).unwrap()),
             Ok(47)
         );
         assert_eq!(
-            LowballAto5::eval_hand(&Hand::from("2c 3d 4h 5s 6c".to_string())),
+            LowballAto5::eval_hand(&Hand::try_from("2c 3d 4h 5s 6c".to_string()).unwrap()),
             Ok(62)
         );
     }
@@ -44,12 +44,14 @@ mod tests {
     #[test]
     fn test_eval_hand_invalid() {
         assert_eq!(
-            LowballAto5::eval_hand(&Hand::from("Ac 2c 3d 4h".to_string())),
+            LowballAto5::eval_hand(&Hand::try_from("Ac 2c 3d 4h".to_string()).unwrap()),
             Err(Error::InvalidHand)
         );
-        assert!(LowballAto5::eval_hand(&Hand::from("Ac 2c 3d 4h 5c".to_string())).is_ok());
+        assert!(
+            LowballAto5::eval_hand(&Hand::try_from("Ac 2c 3d 4h 5c".to_string()).unwrap()).is_ok()
+        );
         assert_eq!(
-            LowballAto5::eval_hand(&Hand::from("Ac 2c 3d 4h 5c 6d".to_string())),
+            LowballAto5::eval_hand(&Hand::try_from("Ac 2c 3d 4h 5c 6d".to_string()).unwrap()),
             Err(Error::InvalidHand)
         );
     }
