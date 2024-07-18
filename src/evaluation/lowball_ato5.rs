@@ -114,25 +114,31 @@ mod tests {
         );
 
         // Pair
-        let h_aa234 = Hand::try_from("Ac Ac 2c 3d 4h".to_string()).unwrap();
+        let h_aajqk = Hand::try_from("Ac Ac Kc Jd Qh".to_string()).unwrap();
         let h_kk234 = Hand::try_from("Kc 2c Kh 3d 4h".to_string()).unwrap();
         let h_55jqk = Hand::try_from("5c Jc Qc Ks 5h".to_string()).unwrap();
+        let h_22345 = Hand::try_from("2c 2d 3h 4c 5h".to_string()).unwrap();
 
         assert_eq!(
-            LowballAto5::compare_hands(&h_aa234, &h_best),
+            LowballAto5::compare_hands(&h_aajqk, &h_best),
             Ordering::Less
         );
+        // Pair always loses to high-card
         assert_eq!(
-            LowballAto5::compare_hands(&h_aa234, &h_9tjqk),
+            LowballAto5::compare_hands(&h_aajqk, &h_9tjqk),
             Ordering::Less
         );
         // Aces are low
         assert_eq!(
-            LowballAto5::compare_hands(&h_aa234, &h_55jqk),
+            LowballAto5::compare_hands(&h_aajqk, &h_55jqk),
             Ordering::Greater
         );
         assert_eq!(
-            LowballAto5::compare_hands(&h_aa234, &h_kk234),
+            LowballAto5::compare_hands(&h_aajqk, &h_kk234),
+            Ordering::Greater
+        );
+        assert_eq!(
+            LowballAto5::compare_hands(&h_aajqk, &h_22345),
             Ordering::Greater
         );
 
@@ -142,7 +148,7 @@ mod tests {
         let h_55jjq = Hand::try_from("5c Jc Qc 5h Jh".to_string()).unwrap();
 
         assert_eq!(
-            LowballAto5::compare_hands(&h_aa223, &h_aa234),
+            LowballAto5::compare_hands(&h_aa223, &h_aajqk),
             Ordering::Less
         );
         assert_eq!(
