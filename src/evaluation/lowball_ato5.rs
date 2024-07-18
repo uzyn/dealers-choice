@@ -73,6 +73,7 @@ mod tests {
         let h_a2346 = Hand::try_from("Ad 2h 3s 4c 6c".to_string()).unwrap();
         let h_a234t = Hand::try_from("Ac 2c 3d 4h Ts".to_string()).unwrap();
         let h_56789 = Hand::try_from("5c 6c 7d 8h 9s".to_string()).unwrap();
+        let h_9tjqk = Hand::try_from("9c Td Jc Qc Ks".to_string()).unwrap();
 
         assert_eq!(
             LowballAto5::compare_hands(&h_best, &h_a2346),
@@ -89,6 +90,33 @@ mod tests {
         assert_eq!(
             LowballAto5::compare_hands(&h_a234t, &h_56789),
             Ordering::Less
+        );
+        assert_eq!(
+            LowballAto5::compare_hands(&h_9tjqk, &h_56789),
+            Ordering::Less
+        );
+
+        // Pair
+        let h_aa234 = Hand::try_from("Ac Ac 2c 3d 4h".to_string()).unwrap();
+        let h_kk234 = Hand::try_from("Kc Kc 2c 3d 4h".to_string()).unwrap();
+        let h_55jqk = Hand::try_from("5c 5c Jc Qc Ks".to_string()).unwrap();
+
+        assert_eq!(
+            LowballAto5::compare_hands(&h_aa234, &h_best),
+            Ordering::Less
+        );
+        assert_eq!(
+            LowballAto5::compare_hands(&h_aa234, &h_9tjqk),
+            Ordering::Less
+        );
+        assert_eq!(
+            // Aces are low
+            LowballAto5::compare_hands(&h_aa234, &h_55jqk),
+            Ordering::Greater
+        );
+        assert_eq!(
+            LowballAto5::compare_hands(&h_aa234, &h_kk234),
+            Ordering::Greater
         );
     }
 }
