@@ -18,7 +18,6 @@ mod tests {
     use crate::card::{Card, Rank, Suit};
     use crate::hand::Hand;
 
-    // test eval_hand
     #[test]
     fn test_eval_hand_valid() {
         let mut hand = Hand::new();

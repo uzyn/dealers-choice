@@ -5,6 +5,7 @@ pub struct LowballAto5 {}
 impl LowballAto5 {
     // Ace is low
     const RANKS: [u32; 13] = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 1];
+    const MULTIPLIER_COUNT: [u32; 4] = [0, 20_000, 50_000, 100_000]; // duplicate cards (pairs, trips, quads)
 }
 
 impl Evaluation for LowballAto5 {
@@ -12,11 +13,17 @@ impl Evaluation for LowballAto5 {
         if hand.cards.len() != 5 {
             return Err(Error::InvalidHand);
         }
+
         let mut score: u32 = 0;
         for card in &hand.cards {
             score += Self::RANKS[card.rank as usize];
         }
-        Ok(score)
+
+        // Reverse the score for lowball, smaller hand should return higher score
+        const MAX_SCORE: u32 = 200_000; // > (4096 * 5) + 100000;
+        let low_score: u32 = MAX_SCORE - score;
+
+        Ok(low_score)
     }
 }
 
@@ -24,20 +31,22 @@ impl Evaluation for LowballAto5 {
 mod tests {
     use super::*;
     use crate::hand::Hand;
+    use std::cmp::Ordering;
+    const MAX_SCORE: u32 = 200_000;
 
     #[test]
     fn test_eval_hand_valid() {
         assert_eq!(
             LowballAto5::eval_hand(&Hand::try_from("Ac 2c 3d 4h 5s".to_string()).unwrap()),
-            Ok(31)
+            Ok(MAX_SCORE - 31)
         );
         assert_eq!(
             LowballAto5::eval_hand(&Hand::try_from("Ac 2d 3h 4s 6c".to_string()).unwrap()),
-            Ok(47)
+            Ok(MAX_SCORE - 47)
         );
         assert_eq!(
             LowballAto5::eval_hand(&Hand::try_from("2c 3d 4h 5s 6c".to_string()).unwrap()),
-            Ok(62)
+            Ok(MAX_SCORE - 62)
         );
     }
 
@@ -53,6 +62,33 @@ mod tests {
         assert_eq!(
             LowballAto5::eval_hand(&Hand::try_from("Ac 2c 3d 4h 5c 6d".to_string()).unwrap()),
             Err(Error::InvalidHand)
+        );
+    }
+
+    #[test]
+    fn test_compare_hands() {
+        // High-card hands
+        let h_best = Hand::try_from("Ac 2c 3d 4h 5s".to_string()).unwrap();
+        let h_a2345 = Hand::try_from("Ad 2s 3c 4c 5h".to_string()).unwrap();
+        let h_a2346 = Hand::try_from("Ad 2h 3s 4c 6c".to_string()).unwrap();
+        let h_a234t = Hand::try_from("Ac 2c 3d 4h Ts".to_string()).unwrap();
+        let h_56789 = Hand::try_from("5c 6c 7d 8h 9s".to_string()).unwrap();
+
+        assert_eq!(
+            LowballAto5::compare_hands(&h_best, &h_a2346),
+            Ordering::Greater
+        );
+        assert_eq!(
+            LowballAto5::compare_hands(&h_best, &h_a2345),
+            Ordering::Equal
+        );
+        assert_eq!(
+            LowballAto5::compare_hands(&h_best, &h_a234t),
+            Ordering::Greater
+        );
+        assert_eq!(
+            LowballAto5::compare_hands(&h_a234t, &h_56789),
+            Ordering::Less
         );
     }
 }
