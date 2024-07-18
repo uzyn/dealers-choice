@@ -1,13 +1,15 @@
 use super::*;
 
+const MAX_SCORE: u32 = u32::MAX;
+
 pub struct LowballAto5 {}
 
 impl LowballAto5 {
     // Ace is low
     const RANKS: [u32; 13] = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 1];
-    const PAIR_PENALTY: u32 = 20_000;
-    const TRIP_PENALTY: u32 = 50_000;
-    const QUAD_PENALTY: u32 = 100_000;
+    const PAIR_MULTIPLIER: u32 = 1 << 13;
+    const TRIP_MULTIPLIER: u32 = 1 << (13 * 2);
+    const QUAD_MULTIPLIER: u32 = 1  << (13 * 3);
 }
 
 impl Evaluation for LowballAto5 {
@@ -19,22 +21,23 @@ impl Evaluation for LowballAto5 {
         let mut frequencies: [u8; 13] = [0; 13];
         let mut score: u32 = 0;
         for card in &hand.cards {
-            score += Self::RANKS[card.rank as usize];
+            // score += Self::RANKS[card.rank as usize];
             frequencies[card.rank as usize] += 1;
         }
 
-        for freq in frequencies.iter() {
+        for (index, &freq) in frequencies.iter().enumerate() {
             match freq {
-                0 | 1 => (),
-                2 => score += Self::PAIR_PENALTY,
-                3 => score += Self::TRIP_PENALTY,
-                4 => score += Self::QUAD_PENALTY,
+                0 => (),
+                1 => score += Self::RANKS[index],
+                2 => score += Self::PAIR_MULTIPLIER * Self::RANKS[index],
+                3 => score += Self::TRIP_MULTIPLIER * Self::RANKS[index],
+                4 => score += Self::QUAD_MULTIPLIER * Self::RANKS[index],
                 _ => return Err(Error::InvalidHand),
             }
         }
+        dbg!(hand.to_string(), score);
 
         // Reverse the score for lowball, smaller hand should return higher score
-        const MAX_SCORE: u32 = 200_000; // > (4096 * 5) + 100000;
         let low_score: u32 = MAX_SCORE - score;
         Ok(low_score)
     }
@@ -45,7 +48,6 @@ mod tests {
     use super::*;
     use crate::hand::Hand;
     use std::cmp::Ordering;
-    const MAX_SCORE: u32 = 200_000;
 
     #[test]
     fn test_eval_hand_valid() {
@@ -189,20 +191,20 @@ mod tests {
         );
 
         // Quads
-        let h_aaaaj = Hand::try_from("Ac Ac Ac Ac Jh".to_string()).unwrap();
+        let h_aaaak = Hand::try_from("Ac Ac Ac Ac Kh".to_string()).unwrap();
         let h_kkkk2 = Hand::try_from("Kc Kc Kc Kc 2h".to_string()).unwrap();
 
         assert_eq!(
-            LowballAto5::compare_hands(&h_aaaaj, &h_aaa23),
+            LowballAto5::compare_hands(&h_aaaak, &h_aaa23),
             Ordering::Less
         );
         assert_eq!(
-            LowballAto5::compare_hands(&h_aaaaj, &h_kkkk2),
+            LowballAto5::compare_hands(&h_aaaak, &h_kkkk2),
             Ordering::Greater
         );
         // Quads always loses to trips
         assert_eq!(
-            LowballAto5::compare_hands(&h_aaaaj, &h_kkk23),
+            LowballAto5::compare_hands(&h_aaaak, &h_kkk23),
             Ordering::Less
         );
     }
