@@ -74,9 +74,9 @@ mod tests {
     #[test]
     fn display_hand_in_string() {
         let mut hand = Hand::new();
-        hand.cards.push(Card::new(Suit::Club, Rank::King));
-        hand.cards.push(Card::new(Suit::Diamond, Rank::Deuce));
-        hand.cards.push(Card::new(Suit::Heart, Rank::Jack));
+        hand.cards.push(Card::new(Suit::Clubs, Rank::King));
+        hand.cards.push(Card::new(Suit::Diamonds, Rank::Deuce));
+        hand.cards.push(Card::new(Suit::Hearts, Rank::Jack));
         assert_eq!(hand.to_string(), "Kc 2d Jh");
     }
 
@@ -93,7 +93,7 @@ mod tests {
         let hand = Hand::try_from("2c Ts 9h 9s Ad".to_string()).unwrap();
         assert_eq!(hand.cards.len(), 5);
         assert_eq!(hand.to_string(), "2c Ts 9h 9s Ad");
-        assert_eq!(hand.cards[1], Card::new(Suit::Spade, Rank::Ten));
+        assert_eq!(hand.cards[1], Card::new(Suit::Spades, Rank::Ten));
     }
 
     #[test]

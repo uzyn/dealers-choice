@@ -21,7 +21,7 @@ mod tests {
     #[test]
     fn test_eval_hand_valid() {
         let mut hand = Hand::new();
-        hand.cards.push(Card::new(Suit::Diamond, Rank::King));
+        hand.cards.push(Card::new(Suit::Diamonds, Rank::King));
         assert_eq!(Highcard::eval_hand(&hand), Ok(11));
         assert_eq!(
             Highcard::eval_hand(&Hand::try_from("Ad".to_string()).unwrap()),
@@ -40,8 +40,8 @@ mod tests {
     #[test]
     fn test_eval_hand_invalid() {
         let mut hand = Hand::new();
-        hand.cards.push(Card::new(Suit::Diamond, Rank::King));
-        hand.cards.push(Card::new(Suit::Heart, Rank::Queen));
+        hand.cards.push(Card::new(Suit::Diamonds, Rank::King));
+        hand.cards.push(Card::new(Suit::Hearts, Rank::Queen));
         let result = Highcard::eval_hand(&hand);
         assert_eq!(result, Err(Error::InvalidHand));
     }
@@ -50,13 +50,13 @@ mod tests {
     #[test]
     fn test_compare_hands() {
         let mut hand1 = Hand::new();
-        hand1.cards.push(Card::new(Suit::Diamond, Rank::King));
+        hand1.cards.push(Card::new(Suit::Diamonds, Rank::King));
 
         let mut hand2 = Hand::new();
-        hand2.cards.push(Card::new(Suit::Heart, Rank::Queen));
+        hand2.cards.push(Card::new(Suit::Hearts, Rank::Queen));
 
         let mut hand3 = Hand::new();
-        hand3.cards.push(Card::new(Suit::Spade, Rank::Queen));
+        hand3.cards.push(Card::new(Suit::Spades, Rank::Queen));
 
         assert_eq!(
             Highcard::compare_hands(&hand1, &hand2),

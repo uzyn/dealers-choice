@@ -2,27 +2,27 @@ use crate::error::Error;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Suit {
-    Spade,
-    Heart,
-    Diamond,
-    Club,
+    Spades,
+    Hearts,
+    Diamonds,
+    Clubs,
 }
 
 // Return "c" for Club, "d" for Diamond, "h" for Heart, and "s" for Spade
 impl std::fmt::Display for Suit {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Suit::Club => write!(f, "c"),
-            Suit::Diamond => write!(f, "d"),
-            Suit::Heart => write!(f, "h"),
-            Suit::Spade => write!(f, "s"),
+            Suit::Clubs => write!(f, "c"),
+            Suit::Diamonds => write!(f, "d"),
+            Suit::Hearts => write!(f, "h"),
+            Suit::Spades => write!(f, "s"),
         }
     }
 }
 
 impl Suit {
     pub fn iter() -> &'static [Suit] {
-        static SUITS: [Suit; 4] = [Suit::Club, Suit::Diamond, Suit::Heart, Suit::Spade];
+        static SUITS: [Suit; 4] = [Suit::Clubs, Suit::Diamonds, Suit::Hearts, Suit::Spades];
         &SUITS
     }
 }
@@ -136,10 +136,10 @@ impl TryFrom<String> for Card {
         }
 
         let suit = match s.chars().last().unwrap() {
-            'c' => Suit::Club,
-            'd' => Suit::Diamond,
-            'h' => Suit::Heart,
-            's' => Suit::Spade,
+            'c' => Suit::Clubs,
+            'd' => Suit::Diamonds,
+            'h' => Suit::Hearts,
+            's' => Suit::Spades,
             _ => return Err(Error::InvalidCardNotation),
         };
         let rank = match s.chars().nth(0).unwrap() {
@@ -182,7 +182,7 @@ mod tests {
     fn display_card_in_string_format() {
         assert_eq!(
             Card {
-                suit: Suit::Club,
+                suit: Suit::Clubs,
                 rank: Rank::Ace
             }
             .to_string(),
@@ -190,7 +190,7 @@ mod tests {
         );
         assert_eq!(
             Card {
-                suit: Suit::Heart,
+                suit: Suit::Hearts,
                 rank: Rank::Ten
             }
             .to_string(),
@@ -198,7 +198,7 @@ mod tests {
         );
         assert_eq!(
             Card {
-                suit: Suit::Spade,
+                suit: Suit::Spades,
                 rank: Rank::Queen
             }
             .to_string(),
@@ -206,7 +206,7 @@ mod tests {
         );
         assert_eq!(
             Card {
-                suit: Suit::Diamond,
+                suit: Suit::Diamonds,
                 rank: Rank::Trey
             }
             .to_string(),
@@ -219,27 +219,27 @@ mod tests {
         assert_eq!(
             Card::try_from("Ac".to_string()).unwrap(),
             Card {
-                suit: Suit::Club,
+                suit: Suit::Clubs,
                 rank: Rank::Ace
             }
         );
         assert_eq!(
             Card::try_from("Th".to_string()).unwrap(),
             Card {
-                suit: Suit::Heart,
+                suit: Suit::Hearts,
                 rank: Rank::Ten
             }
         );
         assert_eq!(
             Card::try_from("Qs".to_string()).unwrap(),
             Card {
-                suit: Suit::Spade,
+                suit: Suit::Spades,
                 rank: Rank::Queen
             }
         );
 
         let card = Card {
-            suit: Suit::Diamond,
+            suit: Suit::Diamonds,
             rank: Rank::Trey,
         };
         assert_eq!(Card::try_from(card.to_string()).unwrap(), card);
