@@ -24,9 +24,18 @@ mod tests {
         let mut hand = Hand::new();
         hand.cards.push(Card::new(Suit::Diamond, Rank::King));
         assert_eq!(Highcard::eval_hand(&hand), Ok(11));
-        assert_eq!(Highcard::eval_hand(&Hand::from("Ad".to_string())), Ok(12));
-        assert_eq!(Highcard::eval_hand(&Hand::from("2h".to_string())), Ok(0));
-        assert_eq!(Highcard::eval_hand(&Hand::from("2c".to_string())), Ok(0));
+        assert_eq!(
+            Highcard::eval_hand(&Hand::try_from("Ad".to_string()).unwrap()),
+            Ok(12)
+        );
+        assert_eq!(
+            Highcard::eval_hand(&Hand::try_from("2h".to_string()).unwrap()),
+            Ok(0)
+        );
+        assert_eq!(
+            Highcard::eval_hand(&Hand::try_from("2c".to_string()).unwrap()),
+            Ok(0)
+        );
     }
 
     #[test]
