@@ -2,7 +2,7 @@ use crate::error::Error;
 use crate::hand::Hand;
 
 pub trait Evaluation {
-    fn eval_hand(hand: &Hand) -> Result<u32, Error>;
+    fn eval_hand(hand: &Hand) -> Result<u128, Error>;
 
     fn compare_hands(hand1: &Hand, hand2: &Hand) -> std::cmp::Ordering {
         let score1 = Self::eval_hand(hand1);

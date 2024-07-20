@@ -4,11 +4,11 @@ use super::*;
 pub struct Highcard {}
 
 impl Evaluation for Highcard {
-    fn eval_hand(hand: &Hand) -> Result<u32, Error> {
+    fn eval_hand(hand: &Hand) -> Result<u128, Error> {
         if hand.cards.len() != 1 {
             return Err(Error::InvalidHand);
         }
-        Ok(hand.cards[0].rank as u32)
+        Ok(hand.cards[0].rank as u128)
     }
 }
 
