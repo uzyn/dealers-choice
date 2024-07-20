@@ -1,25 +1,25 @@
 use super::*;
 
-const MAX_SCORE: u32 = u32::MAX;
+const MAX_SCORE: u64 = u64::MAX;
 
 pub struct LowballAto5 {}
 
 impl LowballAto5 {
     // Ace is low
-    const RANKS: [u32; 13] = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 1];
-    const PAIR_MULTIPLIER: u32 = 1 << 13;
-    const TRIP_MULTIPLIER: u32 = 1 << (13 * 2);
-    const QUAD_MULTIPLIER: u32 = 1  << (13 * 3);
+    const RANKS: [u64; 13] = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 1];
+    const PAIR_MULTIPLIER: u64 = 1 << 13;
+    const TRIP_MULTIPLIER: u64 = 1 << (13 * 2);
+    const QUAD_MULTIPLIER: u64 = 1  << (13 * 3);
 }
 
 impl Evaluation for LowballAto5 {
-    fn eval_hand(hand: &Hand) -> Result<u32, Error> {
+    fn eval_hand(hand: &Hand) -> Result<u64, Error> {
         if hand.cards.len() != 5 {
             return Err(Error::InvalidHand);
         }
 
         let mut frequencies: [u8; 13] = [0; 13];
-        let mut score: u32 = 0;
+        let mut score: u64 = 0;
         for card in &hand.cards {
             // score += Self::RANKS[card.rank as usize];
             frequencies[card.rank as usize] += 1;
@@ -38,7 +38,7 @@ impl Evaluation for LowballAto5 {
         dbg!(hand.to_string(), score);
 
         // Reverse the score for lowball, smaller hand should return higher score
-        let low_score: u32 = MAX_SCORE - score;
+        let low_score: u64 = MAX_SCORE - score;
         Ok(low_score)
     }
 }
