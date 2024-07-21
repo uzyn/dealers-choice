@@ -2,9 +2,8 @@ use super::*;
 
 const MAX_SCORE: u128 = u128::MAX;
 
-pub struct LowballAto5 {
-    hand: Hand,
-}
+#[derive(Default)]
+pub struct LowballAto5 {}
 
 impl LowballAto5 {
     // Ace is low
@@ -15,22 +14,7 @@ impl LowballAto5 {
     const QUADS_MULTIPLIER: u128 = 1 << (13 * 4);
 }
 
-impl From<Hand> for LowballAto5 {
-    fn from(hand: Hand) -> Self {
-        Self { hand }
-    }
-}
-
-impl TryFrom<String> for LowballAto5 {
-    type Error = Error;
-
-    fn try_from(s: String) -> Result<Self, Error> {
-        let hand = Hand::try_from(s)?;
-        Ok(Self::from(hand))
-    }
-}
-
-impl Evaluation for LowballAto5 {
+impl EvalHand for LowballAto5 {
     fn eval_hand(hand: &Hand) -> Result<u128, Error> {
         if hand.cards.len() != 5 {
             return Err(Error::InvalidHand);

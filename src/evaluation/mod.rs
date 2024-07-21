@@ -1,8 +1,8 @@
 use crate::error::Error;
 use crate::hand::Hand;
 
-// pub mod highcard;
-// pub mod lowball_ato5;
+pub mod highcard;
+pub mod lowball_ato5;
 
 pub trait EvalHand: Default {
     fn eval_hand(hand: &Hand) -> Result<u128, Error>;
