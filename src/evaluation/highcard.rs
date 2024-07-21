@@ -78,7 +78,7 @@ mod tests {
     }
 
     #[test]
-    fn test_from_evaluation() {
+    fn test_direct_comparison() {
         let h_j = Evaluation::<Highcard>::try_from("Jd".to_string()).unwrap();
         let h_6 = Evaluation::<Highcard>::try_from("6s".to_string()).unwrap();
         let h_6d = Evaluation::<Highcard>::try_from("6d".to_string()).unwrap();

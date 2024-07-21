@@ -245,4 +245,26 @@ mod tests {
             Ordering::Less
         );
     }
+
+    #[test]
+    fn test_direct_comparison() {
+        let h_aaaak = Evaluation::<LowballAto5>::try_from("Ac Ac Ac Ac Kh".to_string()).unwrap();
+        let h_kkkkq = Evaluation::<LowballAto5>::try_from("Kc Kc Kc Kc Qh".to_string()).unwrap();
+        let h_kkkqq = Evaluation::<LowballAto5>::try_from("Kc Kc Kc Qc Qh".to_string()).unwrap();
+        let h_aaa22 = Evaluation::<LowballAto5>::try_from("Ac Ac Ah 2c 2d".to_string()).unwrap();
+        let h_aa223 = Evaluation::<LowballAto5>::try_from("Ac Ac 2c 2h 3s".to_string()).unwrap();
+        let h_kkjqt = Evaluation::<LowballAto5>::try_from("Kc Kd Jc Qc Td".to_string()).unwrap();
+        let h_kkjqt_ds = Evaluation::<LowballAto5>::try_from("Ks Js Ts Qd Kh".to_string()).unwrap();
+        let h_a2345 = Evaluation::<LowballAto5>::try_from("Ad 2s 3c 4c 5h".to_string()).unwrap();
+        let h_a2346 = Evaluation::<LowballAto5>::try_from("Ad 2h 3s 4c 6c".to_string()).unwrap();
+
+        assert!(h_aaaak > h_kkkkq); // Ace is low
+        assert!(h_kkkqq > h_aaaak); // Full house beats 4 of a kind
+        assert!(h_aaa22 > h_kkkqq);
+        assert!(h_aa223 > h_aaa22); // Two pairs beats full house
+        assert!(h_kkjqt > h_aa223);
+        assert!(h_kkjqt_ds == h_kkjqt); // Suits do not matter
+        assert!(h_a2345 > h_a2346);
+        assert!(h_a2346 > h_kkjqt);
+    }
 }
