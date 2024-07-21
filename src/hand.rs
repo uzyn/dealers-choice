@@ -42,10 +42,10 @@ impl From<Vec<Card>> for Hand {
     }
 }
 
-impl TryFrom<String> for Hand {
+impl TryFrom<&str> for Hand {
     type Error = crate::error::Error;
 
-    fn try_from(s: String) -> Result<Hand, crate::error::Error> {
+    fn try_from(s: &str) -> Result<Hand, crate::error::Error> {
         let trimmed = s.trim();
         let mut cards: Vec<Card> = Vec::new();
 
@@ -54,7 +54,7 @@ impl TryFrom<String> for Hand {
         }
 
         for card_str in trimmed.split_whitespace() {
-            cards.push(Card::try_from(card_str.to_string())?);
+            cards.push(Card::try_from(card_str)?);
         }
         Ok(Hand { cards })
     }
@@ -90,7 +90,7 @@ mod tests {
 
     #[test]
     fn from_string_to_hand() {
-        let hand = Hand::try_from("2c Ts 9h 9s Ad".to_string()).unwrap();
+        let hand = Hand::try_from("2c Ts 9h 9s Ad").unwrap();
         assert_eq!(hand.cards.len(), 5);
         assert_eq!(hand.to_string(), "2c Ts 9h 9s Ad");
         assert_eq!(hand.cards[1], Card::new(Suit::Spades, Rank::Ten));
@@ -98,14 +98,14 @@ mod tests {
 
     #[test]
     fn sort_cards_by_rank() {
-        let mut hand = Hand::try_from("Ac 4c 2c 4h Qs 4s 3d".to_string()).unwrap();
+        let mut hand = Hand::try_from("Ac 4c 2c 4h Qs 4s 3d").unwrap();
         hand.sort_cards(crate::card::OrderFirstBy::Rank);
         assert_eq!(hand.to_string(), "2c 3d 4s 4h 4c Qs Ac");
     }
 
     #[test]
     fn sort_cards_by_suit() {
-        let mut hand = Hand::try_from("Ac 4c 2c 4h Qs 4s 3d".to_string()).unwrap();
+        let mut hand = Hand::try_from("Ac 4c 2c 4h Qs 4s 3d").unwrap();
         hand.sort_cards(crate::card::OrderFirstBy::Suit);
         assert_eq!(hand.to_string(), "4s Qs 4h 3d 2c 4c Ac");
     }

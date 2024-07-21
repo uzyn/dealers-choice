@@ -127,10 +127,10 @@ impl std::fmt::Display for Card {
     }
 }
 
-impl TryFrom<String> for Card {
+impl TryFrom<&str> for Card {
     type Error = Error;
 
-    fn try_from(s: String) -> Result<Card, Error> {
+    fn try_from(s: &str) -> Result<Card, Error> {
         if s.len() != 2 {
             return Err(Error::InvalidCardNotation);
         }
@@ -217,21 +217,21 @@ mod tests {
     #[test]
     fn card_from_string() {
         assert_eq!(
-            Card::try_from("Ac".to_string()).unwrap(),
+            Card::try_from("Ac").unwrap(),
             Card {
                 suit: Suit::Clubs,
                 rank: Rank::Ace
             }
         );
         assert_eq!(
-            Card::try_from("Th".to_string()).unwrap(),
+            Card::try_from("Th").unwrap(),
             Card {
                 suit: Suit::Hearts,
                 rank: Rank::Ten
             }
         );
         assert_eq!(
-            Card::try_from("Qs".to_string()).unwrap(),
+            Card::try_from("Qs").unwrap(),
             Card {
                 suit: Suit::Spades,
                 rank: Rank::Queen
@@ -242,15 +242,15 @@ mod tests {
             suit: Suit::Diamonds,
             rank: Rank::Trey,
         };
-        assert_eq!(Card::try_from(card.to_string()).unwrap(), card);
+        assert_eq!(Card::try_from(card).unwrap(), card);
     }
 
     #[test]
     fn test_card_ord_position() {
-        let card1 = Card::try_from("As".to_string()).unwrap();
-        let card2 = Card::try_from("2c".to_string()).unwrap();
-        let card3 = Card::try_from("Ad".to_string()).unwrap();
-        let card4 = Card::try_from("2d".to_string()).unwrap();
+        let card1 = Card::try_from("As").unwrap();
+        let card2 = Card::try_from("2c").unwrap();
+        let card3 = Card::try_from("Ad").unwrap();
+        let card4 = Card::try_from("2d").unwrap();
 
         assert_eq!(card1.ord_position(OrderFirstBy::Suit), 0 * 13 + 12);
         assert_eq!(card2.ord_position(OrderFirstBy::Suit), 3 * 13 + 0);
@@ -265,39 +265,24 @@ mod tests {
 
     #[test]
     fn test_card_try_from_error() {
+        assert_eq!(Card::try_from("A"), Err(Error::InvalidCardNotation));
+        assert_eq!(Card::try_from("Acx"), Err(Error::InvalidCardNotation));
+        assert_eq!(Card::try_from("1c"), Err(Error::InvalidCardNotation));
+        assert_eq!(Card::try_from("Bc"), Err(Error::InvalidCardNotation));
+        assert_eq!(Card::try_from("AD"), Err(Error::InvalidCardNotation));
         assert_eq!(
-            Card::try_from("A".to_string()),
+            Card::try_from("Ad "), // untrimmed
             Err(Error::InvalidCardNotation)
         );
-        assert_eq!(
-            Card::try_from("Acx".to_string()),
-            Err(Error::InvalidCardNotation)
-        );
-        assert_eq!(
-            Card::try_from("1c".to_string()),
-            Err(Error::InvalidCardNotation)
-        );
-        assert_eq!(
-            Card::try_from("Bc".to_string()),
-            Err(Error::InvalidCardNotation)
-        );
-        assert_eq!(
-            Card::try_from("AD".to_string()),
-            Err(Error::InvalidCardNotation)
-        );
-        assert_eq!(
-            Card::try_from("Ad ".to_string()), // untrimmed
-            Err(Error::InvalidCardNotation)
-        );
-        assert!(Card::try_from("Ad".to_string()).is_ok());
+        assert!(Card::try_from("Ad").is_ok());
     }
 
     #[test]
     fn test_card_cmp() {
-        let card1 = Card::try_from("As".to_string()).unwrap();
-        let card2 = Card::try_from("2c".to_string()).unwrap();
-        let card3 = Card::try_from("Ad".to_string()).unwrap();
-        let card4 = Card::try_from("2d".to_string()).unwrap();
+        let card1 = Card::try_from("As").unwrap();
+        let card2 = Card::try_from("2c").unwrap();
+        let card3 = Card::try_from("Ad").unwrap();
+        let card4 = Card::try_from("2d").unwrap();
 
         assert_eq!(
             card1.cmp_ord_first_by(&card2, OrderFirstBy::Rank),
@@ -341,10 +326,10 @@ mod tests {
 
     #[test]
     fn test_card_ord() {
-        let card1 = Card::try_from("As".to_string()).unwrap();
-        let card2 = Card::try_from("2c".to_string()).unwrap();
-        let card3 = Card::try_from("Ad".to_string()).unwrap();
-        let card4 = Card::try_from("2d".to_string()).unwrap();
+        let card1 = Card::try_from("As").unwrap();
+        let card2 = Card::try_from("2c").unwrap();
+        let card3 = Card::try_from("Ad").unwrap();
+        let card4 = Card::try_from("2d").unwrap();
 
         assert!(card1 > card2);
         assert!(card2 < card1);

@@ -39,13 +39,13 @@ where
     }
 }
 
-impl<T> TryFrom<String> for Evaluation<T>
+impl<T> TryFrom<&str> for Evaluation<T>
 where
     T: EvalHand,
 {
     type Error = Error;
 
-    fn try_from(s: String) -> Result<Self, Error> {
+    fn try_from(s: &str) -> Result<Self, Error> {
         let hand = Hand::try_from(s)?;
         Self::try_from(hand)
     }

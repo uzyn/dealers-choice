@@ -24,18 +24,9 @@ mod tests {
         let mut hand = Hand::new();
         hand.cards.push(Card::new(Suit::Diamonds, Rank::King));
         assert_eq!(Highcard::eval_hand(&hand), Ok(11));
-        assert_eq!(
-            Highcard::eval_hand(&Hand::try_from("Ad".to_string()).unwrap()),
-            Ok(12)
-        );
-        assert_eq!(
-            Highcard::eval_hand(&Hand::try_from("2h".to_string()).unwrap()),
-            Ok(0)
-        );
-        assert_eq!(
-            Highcard::eval_hand(&Hand::try_from("2c".to_string()).unwrap()),
-            Ok(0)
-        );
+        assert_eq!(Highcard::eval_hand(&Hand::try_from("Ad").unwrap()), Ok(12));
+        assert_eq!(Highcard::eval_hand(&Hand::try_from("2h").unwrap()), Ok(0));
+        assert_eq!(Highcard::eval_hand(&Hand::try_from("2c").unwrap()), Ok(0));
     }
 
     #[test]
@@ -79,10 +70,10 @@ mod tests {
 
     #[test]
     fn test_direct_comparison() {
-        let h_j = Evaluation::<Highcard>::try_from("Jd".to_string()).unwrap();
-        let h_6 = Evaluation::<Highcard>::try_from("6s".to_string()).unwrap();
-        let h_6d = Evaluation::<Highcard>::try_from("6d".to_string()).unwrap();
-        let h_a = Evaluation::<Highcard>::try_from("Ad".to_string()).unwrap();
+        let h_j = Evaluation::<Highcard>::try_from("Jd").unwrap();
+        let h_6 = Evaluation::<Highcard>::try_from("6s").unwrap();
+        let h_6d = Evaluation::<Highcard>::try_from("6d").unwrap();
+        let h_a = Evaluation::<Highcard>::try_from("Ad").unwrap();
 
         assert!(h_j > h_6);
         assert!(h_6 == h_6d);

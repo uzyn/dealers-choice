@@ -49,7 +49,6 @@ impl EvalHand for LowballAto5 {
                 _ => return Err(Error::InvalidHand),
             }
         }
-        dbg!(hand.to_string(), score);
 
         // Reverse the score for lowball, smaller hand should return higher score
         let low_score: u128 = MAX_SCORE - score;
@@ -66,15 +65,15 @@ mod tests {
     #[test]
     fn test_eval_hand_valid() {
         assert_eq!(
-            LowballAto5::eval_hand(&Hand::try_from("Ac 2c 3d 4h 5s".to_string()).unwrap()),
+            LowballAto5::eval_hand(&Hand::try_from("Ac 2c 3d 4h 5s").unwrap()),
             Ok(MAX_SCORE - 31)
         );
         assert_eq!(
-            LowballAto5::eval_hand(&Hand::try_from("Ac 2d 3h 4s 6c".to_string()).unwrap()),
+            LowballAto5::eval_hand(&Hand::try_from("Ac 2d 3h 4s 6c").unwrap()),
             Ok(MAX_SCORE - 47)
         );
         assert_eq!(
-            LowballAto5::eval_hand(&Hand::try_from("2c 3d 4h 5s 6c".to_string()).unwrap()),
+            LowballAto5::eval_hand(&Hand::try_from("2c 3d 4h 5s 6c").unwrap()),
             Ok(MAX_SCORE - 62)
         );
     }
@@ -82,18 +81,16 @@ mod tests {
     #[test]
     fn test_eval_hand_invalid() {
         assert_eq!(
-            LowballAto5::eval_hand(&Hand::try_from("Ac 2c 3d 4h".to_string()).unwrap()),
+            LowballAto5::eval_hand(&Hand::try_from("Ac 2c 3d 4h").unwrap()),
             Err(Error::InvalidHand)
         );
-        assert!(
-            LowballAto5::eval_hand(&Hand::try_from("Ac 2c 3d 4h 5c".to_string()).unwrap()).is_ok()
-        );
+        assert!(LowballAto5::eval_hand(&Hand::try_from("Ac 2c 3d 4h 5c").unwrap()).is_ok());
         assert_eq!(
-            LowballAto5::eval_hand(&Hand::try_from("Ac 2c 3d 4h 5c 6d".to_string()).unwrap()),
+            LowballAto5::eval_hand(&Hand::try_from("Ac 2c 3d 4h 5c 6d").unwrap()),
             Err(Error::InvalidHand)
         );
         assert_eq!(
-            LowballAto5::eval_hand(&Hand::try_from("Ac Ad Ac Ah As".to_string()).unwrap()),
+            LowballAto5::eval_hand(&Hand::try_from("Ac Ad Ac Ah As").unwrap()),
             Err(Error::InvalidHand)
         );
     }
@@ -101,12 +98,12 @@ mod tests {
     #[test]
     fn test_compare_hands() {
         // High-card hands
-        let h_best = Hand::try_from("Ac 2c 3d 4h 5s".to_string()).unwrap();
-        let h_a2345 = Hand::try_from("Ad 2s 3c 4c 5h".to_string()).unwrap();
-        let h_a2346 = Hand::try_from("Ad 2h 3s 4c 6c".to_string()).unwrap();
-        let h_a234t = Hand::try_from("Ac 2c 3d 4h Ts".to_string()).unwrap();
-        let h_56789 = Hand::try_from("5c 6c 7d 8h 9s".to_string()).unwrap();
-        let h_9tjqk = Hand::try_from("9c Td Jc Qc Ks".to_string()).unwrap();
+        let h_best = Hand::try_from("Ac 2c 3d 4h 5s").unwrap();
+        let h_a2345 = Hand::try_from("Ad 2s 3c 4c 5h").unwrap();
+        let h_a2346 = Hand::try_from("Ad 2h 3s 4c 6c").unwrap();
+        let h_a234t = Hand::try_from("Ac 2c 3d 4h Ts").unwrap();
+        let h_56789 = Hand::try_from("5c 6c 7d 8h 9s").unwrap();
+        let h_9tjqk = Hand::try_from("9c Td Jc Qc Ks").unwrap();
 
         assert_eq!(
             LowballAto5::compare_hands(&h_best, &h_a2346),
@@ -130,10 +127,10 @@ mod tests {
         );
 
         // Pair
-        let h_aajqk = Hand::try_from("Ac Ac Kc Jd Qh".to_string()).unwrap();
-        let h_kk234 = Hand::try_from("Kc 2c Kh 3d 4h".to_string()).unwrap();
-        let h_55jqk = Hand::try_from("5c Jc Qc Ks 5h".to_string()).unwrap();
-        let h_22345 = Hand::try_from("2c 2d 3h 4c 5h".to_string()).unwrap();
+        let h_aajqk = Hand::try_from("Ac Ac Kc Jd Qh").unwrap();
+        let h_kk234 = Hand::try_from("Kc 2c Kh 3d 4h").unwrap();
+        let h_55jqk = Hand::try_from("5c Jc Qc Ks 5h").unwrap();
+        let h_22345 = Hand::try_from("2c 2d 3h 4c 5h").unwrap();
 
         assert_eq!(
             LowballAto5::compare_hands(&h_aajqk, &h_best),
@@ -159,9 +156,9 @@ mod tests {
         );
 
         // Two pairs
-        let h_aa223 = Hand::try_from("Ac Ac 2c 2d 3h".to_string()).unwrap();
-        let h_kk223 = Hand::try_from("Kc Kc 2c 2d 3h".to_string()).unwrap();
-        let h_55jjq = Hand::try_from("5c Jc Qc 5h Jh".to_string()).unwrap();
+        let h_aa223 = Hand::try_from("Ac Ac 2c 2d 3h").unwrap();
+        let h_kk223 = Hand::try_from("Kc Kc 2c 2d 3h").unwrap();
+        let h_55jjq = Hand::try_from("5c Jc Qc 5h Jh").unwrap();
 
         assert_eq!(
             LowballAto5::compare_hands(&h_aa223, &h_aajqk),
@@ -182,9 +179,9 @@ mod tests {
         );
 
         // Trips
-        let h_aaa23 = Hand::try_from("Ac Ac Ac 2c 3h".to_string()).unwrap();
-        let h_kkkjq = Hand::try_from("Kc Kc Kc Jc Qh".to_string()).unwrap();
-        let h_555jq = Hand::try_from("5c Jc Qc 5h 5s".to_string()).unwrap();
+        let h_aaa23 = Hand::try_from("Ac Ac Ac 2c 3h").unwrap();
+        let h_kkkjq = Hand::try_from("Kc Kc Kc Jc Qh").unwrap();
+        let h_555jq = Hand::try_from("5c Jc Qc 5h 5s").unwrap();
 
         assert_eq!(
             LowballAto5::compare_hands(&h_aaa23, &h_aa223),
@@ -205,8 +202,8 @@ mod tests {
         );
 
         // Fullhouse
-        let h_aakkk = Hand::try_from("Ac Ac Kc Kd Kh".to_string()).unwrap();
-        let h_aaakk = Hand::try_from("Ac Ac Ac Kc Kh".to_string()).unwrap();
+        let h_aakkk = Hand::try_from("Ac Ac Kc Kd Kh").unwrap();
+        let h_aaakk = Hand::try_from("Ac Ac Ac Kc Kh").unwrap();
 
         assert_eq!(
             LowballAto5::compare_hands(&h_aakkk, &h_aa223),
@@ -223,8 +220,8 @@ mod tests {
         );
 
         // Quads
-        let h_aaaak = Hand::try_from("Ac Ac Ac Ac Kh".to_string()).unwrap(); // ensure score does not overflow
-        let h_kkkk2 = Hand::try_from("Kc Kc Kc Kc 2h".to_string()).unwrap();
+        let h_aaaak = Hand::try_from("Ac Ac Ac Ac Kh").unwrap(); // ensure score does not overflow
+        let h_kkkk2 = Hand::try_from("Kc Kc Kc Kc 2h").unwrap();
 
         assert_eq!(
             LowballAto5::compare_hands(&h_aaaak, &h_aaa23),
@@ -248,15 +245,15 @@ mod tests {
 
     #[test]
     fn test_direct_comparison() {
-        let h_aaaak = Evaluation::<LowballAto5>::try_from("Ac Ac Ac Ac Kh".to_string()).unwrap();
-        let h_kkkkq = Evaluation::<LowballAto5>::try_from("Kc Kc Kc Kc Qh".to_string()).unwrap();
-        let h_kkkqq = Evaluation::<LowballAto5>::try_from("Kc Kc Kc Qc Qh".to_string()).unwrap();
-        let h_aaa22 = Evaluation::<LowballAto5>::try_from("Ac Ac Ah 2c 2d".to_string()).unwrap();
-        let h_aa223 = Evaluation::<LowballAto5>::try_from("Ac Ac 2c 2h 3s".to_string()).unwrap();
-        let h_kkjqt = Evaluation::<LowballAto5>::try_from("Kc Kd Jc Qc Td".to_string()).unwrap();
-        let h_kkjqt_ds = Evaluation::<LowballAto5>::try_from("Ks Js Ts Qd Kh".to_string()).unwrap();
-        let h_a2345 = Evaluation::<LowballAto5>::try_from("Ad 2s 3c 4c 5h".to_string()).unwrap();
-        let h_a2346 = Evaluation::<LowballAto5>::try_from("Ad 2h 3s 4c 6c".to_string()).unwrap();
+        let h_aaaak = Evaluation::<LowballAto5>::try_from("Ac Ac Ac Ac Kh").unwrap();
+        let h_kkkkq = Evaluation::<LowballAto5>::try_from("Kc Kc Kc Kc Qh").unwrap();
+        let h_kkkqq = Evaluation::<LowballAto5>::try_from("Kc Kc Kc Qc Qh").unwrap();
+        let h_aaa22 = Evaluation::<LowballAto5>::try_from("Ac Ac Ah 2c 2d").unwrap();
+        let h_aa223 = Evaluation::<LowballAto5>::try_from("Ac Ac 2c 2h 3s").unwrap();
+        let h_kkjqt = Evaluation::<LowballAto5>::try_from("Kc Kd Jc Qc Td").unwrap();
+        let h_kkjqt_ds = Evaluation::<LowballAto5>::try_from("Ks Js Ts Qd Kh").unwrap();
+        let h_a2345 = Evaluation::<LowballAto5>::try_from("Ad 2s 3c 4c 5h").unwrap();
+        let h_a2346 = Evaluation::<LowballAto5>::try_from("Ad 2h 3s 4c 6c").unwrap();
 
         assert!(h_aaaak > h_kkkkq); // Ace is low
         assert!(h_kkkqq > h_aaaak); // Full house beats 4 of a kind
