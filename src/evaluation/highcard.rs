@@ -1,7 +1,9 @@
 use super::*;
 
 // Simple evaluation algorithm mainly for testing
-pub struct Highcard {}
+pub struct Highcard {
+    hand: Hand,
+}
 
 impl Evaluation for Highcard {
     fn eval_hand(hand: &Hand) -> Result<u128, Error> {
@@ -11,6 +13,22 @@ impl Evaluation for Highcard {
         Ok(hand.cards[0].rank as u128)
     }
 }
+
+impl From<Hand> for Highcard {
+    fn from(hand: Hand) -> Self {
+        Self { hand }
+    }
+}
+
+impl TryFrom<String> for Highcard {
+    type Error = Error;
+
+    fn try_from(s: String) -> Result<Self, Error> {
+        let hand = Hand::try_from(s)?;
+        Ok(Self::from(hand))
+    }
+}
+
 
 #[cfg(test)]
 mod tests {

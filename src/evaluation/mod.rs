@@ -1,7 +1,7 @@
 use crate::error::Error;
 use crate::hand::Hand;
 
-pub trait Evaluation {
+pub trait Evaluation: From<Hand> + TryFrom<String> {
     fn eval_hand(hand: &Hand) -> Result<u128, Error>;
 
     fn compare_hands(hand1: &Hand, hand2: &Hand) -> std::cmp::Ordering {
