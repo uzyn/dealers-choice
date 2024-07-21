@@ -1,7 +1,7 @@
 use super::*;
 
 // Simple evaluation algorithm mainly for testing
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct Highcard {}
 
 impl EvalHand for Highcard {
@@ -75,5 +75,17 @@ mod tests {
             Highcard::compare_hands(&hand2, &hand3),
             std::cmp::Ordering::Equal
         );
+    }
+
+    #[test]
+    fn test_from_evaluation() {
+        let h_j = Evaluation::<Highcard>::try_from("Jd".to_string()).unwrap();
+        let h_6 = Evaluation::<Highcard>::try_from("6s".to_string()).unwrap();
+        let h_6d = Evaluation::<Highcard>::try_from("6d".to_string()).unwrap();
+        let h_a = Evaluation::<Highcard>::try_from("Ad".to_string()).unwrap();
+
+        assert!(h_j > h_6);
+        assert!(h_6 == h_6d);
+        assert!(h_j < h_a);
     }
 }

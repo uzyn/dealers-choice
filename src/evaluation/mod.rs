@@ -14,6 +14,7 @@ pub trait EvalHand: Default {
     }
 }
 
+#[derive(Debug)]
 pub struct Evaluation<T>
 where
     T: EvalHand,
@@ -47,5 +48,34 @@ where
     fn try_from(s: String) -> Result<Self, Error> {
         let hand = Hand::try_from(s)?;
         Self::try_from(hand)
+    }
+}
+
+impl<T> PartialEq for Evaluation<T>
+where
+    T: EvalHand,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.score == other.score
+    }
+}
+
+impl<T> Eq for Evaluation<T> where T: EvalHand {}
+
+impl<T> Ord for Evaluation<T>
+where
+    T: EvalHand,
+{
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.score.cmp(&other.score)
+    }
+}
+
+impl<T> PartialOrd for Evaluation<T>
+where
+    T: EvalHand,
+{
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
     }
 }
