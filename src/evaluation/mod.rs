@@ -14,25 +14,34 @@ pub trait EvalHand: Default {
     }
 }
 
-pub struct Evaluation<T> where T: EvalHand {
+pub struct Evaluation<T>
+where
+    T: EvalHand,
+{
     pub hand: Hand,
     pub evaluator: T,
     pub score: u128,
 }
 
-impl<T> TryFrom<Hand> for Evaluation<T> where T: EvalHand {
+impl<T> TryFrom<Hand> for Evaluation<T>
+where
+    T: EvalHand,
+{
     type Error = Error;
 
     fn try_from(hand: Hand) -> Result<Self, Error> {
         Ok(Self {
             hand: hand.clone(),
             evaluator: T::default(),
-            score: T::eval_hand(&hand)?
+            score: T::eval_hand(&hand)?,
         })
     }
 }
 
-impl<T> TryFrom<String> for Evaluation<T> where T: EvalHand {
+impl<T> TryFrom<String> for Evaluation<T>
+where
+    T: EvalHand,
+{
     type Error = Error;
 
     fn try_from(s: String) -> Result<Self, Error> {
